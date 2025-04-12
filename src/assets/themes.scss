@@ -1,0 +1,39 @@
+@property --myColor1 {
+  syntax: '<color>';
+  initial-value: #ffffff;
+  inherits: false;
+}
+
+@property --myColor2 {
+  syntax: '<color>';
+  initial-value: #cfeaff;
+  inherits: false;
+}
+
+@property --myColor3 {
+  syntax: '<color>';
+  initial-value: #b5deff;
+  inherits: false;
+}
+@property --myColor4 {
+  syntax: '<color>';
+  initial-value: #60b7ff;
+  inherits: false;
+}
+
+.light-theme {
+  --color-text-main: #333333;
+  --body-background-color: #fff;
+  --footer-background-color: #323232;
+  --item-main-color: #fade56;
+  --item-second-color: #f8f8f8;
+  --copyrights--color: #1d1d1d;
+}
+
+.dark-theme {
+  --color-text-main: #eeeeee;
+  --body-background-color: #323232;
+  --footer-background-color: #323232;
+  --item-main-color: #fade56;
+  --item-second-color: #f8f8f8;
+}
