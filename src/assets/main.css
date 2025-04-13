@@ -36,6 +36,9 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+button {
+  height: 100%;
+}
 #app {
   display: grid;
   grid-template-rows: auto minmax(100px, 1fr) auto;
@@ -44,4 +47,8 @@ body {
   /* margin: 0 auto; */
   /* padding: 2rem; */
   font-weight: normal;
+}
+
+.app-wrapper {
+  max-width: 1980px;
 }

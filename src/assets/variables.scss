@@ -1,14 +1,4 @@
 //empty line for scss import
-:root {
-  --font-size-default: 18px;
-  --page--side-padding: 3rem;
-  --scrollbar-track-color: #ffffff;
-  --scrollbar-thumb-color: #0691ff;
-  --scrollbar-thumb-hover-color: #3fa8ff;
-  --twinkle-duration: 4s;
-  --border-radius: 8px;
-}
-
 @media screen and (max-width: 1440px) {
   :root {
     --page--side-padding: 2rem;

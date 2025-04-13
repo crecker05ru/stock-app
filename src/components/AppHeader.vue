@@ -1,13 +1,26 @@
 <template>
   <header class="header">
-    <!-- <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" /> -->
-
-    <div class="wrapper">
-      <!-- <HelloWorld msg="You did it!" /> -->
-
-      <nav>
-        <!-- <RouterLink to="/">Home</RouterLink> -->
-        <!-- <RouterLink to="/about">About</RouterLink> -->
+    <div class="header__wrapper">
+      <div class="header__top">
+        <div class="header__top-select">Санкт-Петербург</div>
+        <div class="header__top-element">Отзывы</div>
+        <div class="header__top-element">Покупателям</div>
+        <input placeholder="Поиск по сайту" />
+        <button>Войти</button>
+      </div>
+      <div class="header__center">
+        <div>Корзина</div>
+      </div>
+      <nav class="header__nav">
+        <div class="header__nav-wrapper app-wrapper">
+          <RouterLink class="header__nav-link" to="/">ШИНЫ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">ГРУЗОВЫЕ ШИНЫ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">МОТОШИНЫ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">ДИСКИ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">ПУНКТЫ ВЫДАЧИ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">АКЦИИ</RouterLink>
+          <RouterLink class="header__nav-link" to="/about">КОНТАКТЫ</RouterLink>
+        </div>
       </nav>
     </div>
   </header>
@@ -15,6 +28,21 @@
 <style lang="scss" scoped>
 .header {
   height: 60px;
-  border: 2px solid #000;
+  // border: 2px solid #000;
+  &__top {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 200px);
+  }
+  &__nav {
+    background-color: var(--background-color-header);
+  }
+  &__nav-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    align-items: center;
+    justify-items: center;
+    height: 50px;
+    color: var(--color-text-header);
+  }
 }
 </style>
