@@ -106,8 +106,37 @@
 
 import sqlite3 from 'sqlite3'
 import express from 'express'
-
+import cors from 'cors'
+import bodyParser from 'body-parser'
 const app = express()
+const urlencodedParser = express.urlencoded({ extended: false })
+app.use(cors())
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+// app.options('*', cors())
+const allowCrossDomain = (req, res, next) => {
+  res.header(`Access-Control-Allow-Origin`, `example.com`)
+  res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`)
+  res.header(`Access-Control-Allow-Headers`, `Content-Type`)
+  next()
+}
+
+// app.configure(() => {
+//   app.use(express.bodyParser())
+//   app.use(express.cookieParser())
+//   app.use(express.session({ secret: `cool beans` }))
+//   app.use(express.methodOverride())
+//   // CORS middleware
+//   app.use(allowCrossDomain)
+//   app.use(app.router)
+//   app.use(express.static(`public`))
+// })
+
+// app.get('/*', function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', '*')
+//   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+//   next()
+// })
 
 app.get('/', (req, res) => {
   res.send('change me to see updates, express~!')
@@ -155,22 +184,26 @@ db.serialize(() => {
 app.get('/db', async (req, res) => {
   // const resp = await fetch('https://api.ipify.org?format=json')
   // const json = await resp.json()
+  // res.header('Access-Control-Allow-Origin', '*')
+  // res.header('Access-Control-Allow-Headers', 'X-Requested-With')
   db.get('SELECT * FROM users3', (err, row) => {
     console.error('err', err)
     console.log('res', row)
-    res.json({ response: row })
+    const json = res.json({ response: row })
+    return json
   })
 })
 
-app.post('/db/post', async (req, res) => {
-  // const resp = await fetch('https://api.ipify.org?format=json')
-  // const json = await resp.json()
-  // db.get('SELECT * FROM users3', (err, row) => {
-  //   console.error('err', err)
-  //   console.log('res', row)
-  //   res.json({ response: row })
-  // })
-  console.log('req', req)
+app.post('/db/post', async function (req, res) {
+  console.log('req.body', req.body)
+  // const json = res.json(req)
+  db.run(`${req.body.value}`, (err, row) => {
+    // const json = res.json({ response: row })
+    console.log('db.exec err', err)
+    console.log('row', row)
+    res.send(row)
+  })
+  // res.send('ok')
 })
 
 // db.close()

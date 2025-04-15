@@ -5,8 +5,10 @@
         <div class="header__top-select">Санкт-Петербург</div>
         <div class="header__top-element">Отзывы</div>
         <div class="header__top-element">Покупателям</div>
-        <input placeholder="Поиск по сайту" />
-        <button>Войти</button>
+        <!-- <input placeholder="Поиск по сайту" /> -->
+        <AppInput placeholder="Поиск по сайту" />
+        <button class="header__button-auth">Войти</button>
+        <button class="header__button-auth" @click="$router.push('/admin-stock')">Админка</button>
       </div>
       <div class="header__center">
         <div>Корзина</div>
@@ -25,13 +27,17 @@
     </div>
   </header>
 </template>
+<script setup lang="ts">
+import AppInput from '@/components/ui/AppInput.vue'
+</script>
 <style lang="scss" scoped>
 .header {
-  height: 60px;
+  // height: 60px;
   // border: 2px solid #000;
   &__top {
     display: grid;
-    grid-template-columns: repeat(auto-fill, 200px);
+    grid-template-columns: repeat(auto-fit, minmax(50px, auto));
+    align-items: center;
   }
   &__nav {
     background-color: var(--background-color-header);
@@ -43,6 +49,9 @@
     justify-items: center;
     height: 50px;
     color: var(--color-text-header);
+  }
+  &__button-auth {
+    max-width: 70px;
   }
 }
 </style>

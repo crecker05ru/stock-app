@@ -35,7 +35,7 @@
 </template>
 <script setup lang="ts">
 import TheWelcome from '../components/TheWelcome.vue'
-import FilterBlock from '../components/FIlterBlock.vue'
+import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 
 const stockItems = [
@@ -109,6 +109,7 @@ const stockItems = [
   &__category-item {
     background-color: var(--item-main-color);
     border-radius: var(--border-radius-button);
+    cursor: pointer;
   }
   &__section-list {
     display: grid;

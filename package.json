@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "server": "node ./server/server.js",
+    "dev-server": "vite && yarn server",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "test:unit": "vitest",
@@ -18,6 +19,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0",
     "pinia": "^3.0.1",
     "sqlite3": "^5.1.7",
