@@ -9,6 +9,8 @@
       <div class="admin-stock__section-interaction">
         <AppInput v-model="inputValue" />
         <AppButton label="Подтвердить" @click="submit" />
+        <AppButton label="Exec" @click="execute" />
+        <AppButton label="insert" @click="insert" />
       </div>
       <ul>
         <li v-for="(fetch, index) in fetchs" :key="index">{{ fetch }}</li>
@@ -57,11 +59,25 @@ async function getDataFromDB() {
   }
 }
 
+async function getDataFromChinook() {
+  // fetch('http://localhost:3000/db').then((res) => {
+  //   console.log('res', res)
+  //   data.value = res
+  // })
+  try {
+    const response = await fetch('http://localhost:3000/chinook')
+    const body = await response.json()
+    data.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 function submit() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
 
-  fetch('http://localhost:3000/db/post', {
+  fetch('http://localhost:3000/db/run', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -70,6 +86,38 @@ function submit() {
   }).then((res) => {
     console.log('res', res)
     getDataFromDB()
+    inputValue.value = ''
+  })
+}
+
+function execute() {
+  fetchs.value.push(inputValue.value)
+  // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
+
+  fetch('http://localhost:3000/chinook/execute', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ value: inputValue.value }),
+  }).then((res) => {
+    console.log('res', res)
+    getDataFromChinook()
+    inputValue.value = ''
+  })
+}
+
+function insert() {
+  fetchs.value.push(inputValue.value)
+  fetch('http://localhost:3000/chinook/insert', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ value: inputValue.value }),
+  }).then((res) => {
+    console.log('res', res)
+    getDataFromChinook()
     inputValue.value = ''
   })
 }

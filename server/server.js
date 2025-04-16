@@ -108,6 +108,7 @@ import sqlite3 from 'sqlite3'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+
 const app = express()
 const urlencodedParser = express.urlencoded({ extended: false })
 app.use(cors())
@@ -155,9 +156,51 @@ if (import.meta?.env?.PROD) {
 
 app.listen(3000)
 export const viteNodeServer = app
-const dbPath = './database.db'
+const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)
+sqlite3.verbose()
+const chinook = new sqlite3.Database('./server/chinook.db')
 console.log({ db })
+
+export const execute = async (db, sql) => {
+  return new Promise((resolve, reject) => {
+    db.exec(sql, (err) => {
+      if (err) reject(err)
+      resolve()
+    })
+  })
+}
+
+export const insert = async (db, sql, params = []) => {
+  if (params && params.length > 0) {
+    return new Promise((resolve, reject) => {
+      db.run(sql, params, (err) => {
+        if (err) reject(err)
+        resolve()
+      })
+    })
+  }
+  return new Promise((resolve, reject) => {
+    db.exec(sql, (err) => {
+      if (err) reject(err)
+      resolve()
+    })
+  })
+}
+
+const sqlInsert = `INSERT INTO products(name, price) VALUES(?, ?)`
+
+chinook.serialize(() => {
+  console.log({ chinook })
+  // chinook.get('SELECT * FROM products', (err, res) => {
+  //   console.error('chinook err', err)
+  //   console.log('chinook res', res)
+  // })
+
+  chinook.all("select name from sqlite_master where type='table'", function (err, tables) {
+    console.log('tables', tables)
+  })
+})
 
 db.serialize(() => {
   console.log({ db })
@@ -175,10 +218,10 @@ db.serialize(() => {
   //   console.log(row.id + ': ' + row.info)
   // })
 
-  db.get('SELECT * FROM users3', (err, res) => {
-    console.error('err', err)
-    console.log('res', res)
-  })
+  // db.get('SELECT * FROM users3', (err, res) => {
+  //   console.error('err', err)
+  //   console.log('res', res)
+  // })
 })
 
 app.get('/db', async (req, res) => {
@@ -194,16 +237,67 @@ app.get('/db', async (req, res) => {
   })
 })
 
-app.post('/db/post', async function (req, res) {
+app.post('/db/run', async function (req, res) {
   console.log('req.body', req.body)
   // const json = res.json(req)
   db.run(`${req.body.value}`, (err, row) => {
     // const json = res.json({ response: row })
-    console.log('db.exec err', err)
-    console.log('row', row)
+    console.log('db.run err', err)
+    console.log('run row', row)
     res.send(row)
   })
   // res.send('ok')
+})
+
+app.post('/db/execute', async function (req, res) {
+  console.log('req.body', req.body)
+  db.exec(`${req.body.value}`, (row) => {
+    // const json = res.json({ response: row })
+    console.log('db.exec err', err)
+    console.log('exec row', row)
+    res.send(row)
+  })
+  // res.send('ok')
+})
+
+app.get('/chinook', async (req, res) => {
+  // const resp = await fetch('https://api.ipify.org?format=json')
+  // const json = await resp.json()
+  // res.header('Access-Control-Allow-Origin', '*')
+  // res.header('Access-Control-Allow-Headers', 'X-Requested-With')
+  chinook.get('SELECT * FROM products', (err, row) => {
+    console.error('err', err)
+    console.log('chinook res', row)
+    res.send(row)
+  })
+})
+
+app.post('/chinook/execute', async (req, res) => {
+  try {
+    await execute(
+      chinook,
+      `CREATE TABLE IF NOT EXISTS products (
+        id INTEGER PRIMARY KEY,
+        name TEXT NOT NULL,
+        price DECIMAL(10, 2) NOT NULL)`,
+    )
+  } catch (error) {
+    console.log(error)
+  } finally {
+    // chinook.close()
+    res.send('chinook success')
+  }
+})
+
+app.post('/chinook/insert', async (req, res) => {
+  try {
+    await insert(chinook, sqlInsert, ['iPhone', 899.99])
+  } catch (error) {
+    console.log(error)
+  } finally {
+    // chinook.close()
+    res.send('chinook insert success')
+  }
 })
 
 // db.close()
