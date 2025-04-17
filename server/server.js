@@ -158,7 +158,7 @@ app.listen(3000)
 export const viteNodeServer = app
 const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)
-sqlite3.verbose()
+sqlite3
 const chinook = new sqlite3.Database('./server/chinook.db')
 console.log({ db })
 
@@ -272,19 +272,24 @@ app.get('/chinook', async (req, res) => {
   })
 })
 
+app.get('/tables', (req, res) => {
+  chinook.all("SELECT name FROM sqlite_master WHERE type='table'", function (err, tables) {
+    console.log('err', err)
+    console.log('tables', tables)
+
+    res.send({ tables })
+  })
+})
 app.post('/chinook/execute', async (req, res) => {
+  console.log('req.body', req.body)
+  if (!`${req.body.value}`) {
+    res.send('no query')
+  }
   try {
-    await execute(
-      chinook,
-      `CREATE TABLE IF NOT EXISTS products (
-        id INTEGER PRIMARY KEY,
-        name TEXT NOT NULL,
-        price DECIMAL(10, 2) NOT NULL)`,
-    )
+    await execute(chinook, `${req.body.value}`)
   } catch (error) {
     console.log(error)
   } finally {
-    // chinook.close()
     res.send('chinook success')
   }
 })

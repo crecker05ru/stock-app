@@ -25,14 +25,15 @@
   --font-size-default: 15px;
   --page--side-padding: 3rem;
   --border-radius-block: 12px;
+  --border-radius: 8px;
+  --border-radius-item: 6px;
+  --border-radius-button: 10px;
   --border-block: 1px solid;
   --border-button: 1px solid;
   --scrollbar-track-color: #ffffff;
   --scrollbar-thumb-color: #0691ff;
   --scrollbar-thumb-hover-color: #3fa8ff;
   --twinkle-duration: 4s;
-  --border-radius: 8px;
-  --border-radius-button: 10px;
 }
 
 .light-theme {
@@ -52,6 +53,7 @@
   --background-color-header: #333333;
   --background-color-item: #fff;
   --background-color-block: #f8f8f8;
+  --background-color-item-hover: #e6e9ec;
   --item-second-color: #f8f8f8;
   --copyrights--color: #1d1d1d;
 }
@@ -71,6 +73,7 @@
   --item-main-color: #fade56;
   --item-second-color: #f8f8f8;
   --background-color-header: #333333;
+  --background-color-item-hover: #e6e9ec;
   --background-color-item: #fff;
   --background-color-block: #f8f8f8;
 }

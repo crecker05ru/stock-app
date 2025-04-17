@@ -3,14 +3,42 @@
     <div class="admin-stock__filters">
       <!-- <FilterBlock class="admin-stock__filter" /> -->
     </div>
+    <div class="admin-stock__selects">
+      <AppSelect
+        class="admin-stock__select"
+        placeholder="выберите таблицу"
+        :options="tableOptions"
+        optionNameField="name"
+        optionKeyField="name"
+        v-model="selectedOptions.table"
+      />
+      <AppSelect
+        class="admin-stock__select"
+        placeholder="выберите операцию"
+        :options="operationOptions"
+        optionNameField="name"
+        optionKeyField="name"
+        v-model="selectedOptions.operation"
+      />
+      <AppSelect
+        class="admin-stock__select"
+        placeholder="выберите функцию"
+        :options="functionOptions"
+        optionNameField="name"
+        optionKeyField="name"
+        v-model="selectedOptions.function"
+      />
+    </div>
+    <AppButton label="Подтвердить" @click="submit" />
+    <div>Выбранные опции {{ selectedOptions }}</div>
+    <!-- <AppButton label="Tables" @click="getTables" /> -->
     <section class="admin-stock__section">
       <textarea v-if="data" :modelValue="data"></textarea>
       <span v-if="data">{{ data }}</span>
       <div class="admin-stock__section-interaction">
         <AppInput v-model="inputValue" />
-        <AppButton label="Подтвердить" @click="submit" />
         <AppButton label="Exec" @click="execute" />
-        <AppButton label="insert" @click="insert" />
+        <!-- <AppButton label="insert" @click="insert" /> -->
       </div>
       <ul>
         <li v-for="(fetch, index) in fetchs" :key="index">{{ fetch }}</li>
@@ -30,7 +58,7 @@ import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
-
+import AppSelect from '@/components/ui/AppSelect.vue'
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
 const stockItems = [
@@ -44,6 +72,104 @@ const stockItems = [
   },
 ]
 
+const tableOptions = [
+  {
+    name: 'albums',
+  },
+  {
+    name: 'sqlite_sequence',
+  },
+  {
+    name: 'artists',
+  },
+  {
+    name: 'customers',
+  },
+  {
+    name: 'employees',
+  },
+  {
+    name: 'genres',
+  },
+  {
+    name: 'invoices',
+  },
+  {
+    name: 'invoice_items',
+  },
+  {
+    name: 'media_types',
+  },
+  {
+    name: 'playlists',
+  },
+  {
+    name: 'playlist_track',
+  },
+  { name: 'products' },
+  {
+    name: 'tracks',
+  },
+  {
+    name: 'sqlite_stat1',
+  },
+]
+
+//INSERT INTO products (name, price) VALUES ('Pixel 6', 499)
+
+const operationOptions = [
+  {
+    name: 'INSERT',
+  },
+  {
+    name: 'UPDATE',
+  },
+  {
+    name: 'DELETE',
+  },
+  {
+    name: 'GET',
+  },
+]
+
+const functionOptions = [
+  {
+    name: 'run',
+  },
+  {
+    name: 'get',
+  },
+  {
+    name: 'each',
+  },
+  {
+    name: 'exec',
+  },
+  {
+    name: 'prepare',
+  },
+  {
+    name: 'map',
+  },
+  {
+    name: 'loadExtension',
+  },
+  {
+    name: 'bind',
+  },
+  {
+    name: 'reset',
+  },
+  {
+    name: 'finalize',
+  },
+]
+const selectedTableOption = ref()
+const selectedOptions = ref({
+  table: '',
+  operation: '',
+  function: '',
+})
 const data = ref()
 async function getDataFromDB() {
   // fetch('http://localhost:3000/db').then((res) => {
@@ -121,6 +247,25 @@ function insert() {
     inputValue.value = ''
   })
 }
+
+async function getTables() {
+  // fetch('http://localhost:3000/tables', {
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  // }).then((res) => {
+  //   console.log('res', res)
+  //   getDataFromChinook()
+  //   inputValue.value = ''
+  // })
+  try {
+    const response = await fetch('http://localhost:3000/tables')
+    const body = await response.json()
+    data.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
 </script>
 <style lang="scss" scoped>
 .admin-stock {
@@ -135,6 +280,14 @@ function insert() {
     background-color: var(--item-main-color);
     border-radius: var(--border-radius-button);
     cursor: pointer;
+  }
+  &__selects {
+    display: grid;
+    grid-template: auto / repeat(auto-fit, minmax(70px, 1fr));
+    margin-bottom: 24px;
+  }
+  &__select {
+    max-width: 320px;
   }
   &__section-list {
     display: grid;

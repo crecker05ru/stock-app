@@ -120,7 +120,7 @@ const $props = defineProps<{
     // height: 100%;
     padding: 12px 12px;
     transform: translate(0px, -2px);
-    transition: all 100ms;
+    transition: transform 100ms;
     background-color: var(--item-main-color);
     border-radius: var(--border-radius-button);
     border: var(--border-button);
