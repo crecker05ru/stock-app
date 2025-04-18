@@ -37,7 +37,7 @@
 import { defineProps, toRef, ref } from 'vue'
 import IconArrowSelect from '@/components/icons/IconArrowSelect.vue'
 
-const $emit = defineEmits<{
+const emit = defineEmits<{
   buttonClick: [value: void]
   'update:modelValue': [value: object | undefined]
 }>()
@@ -53,7 +53,7 @@ const selectedOption = toRef<object | undefined>(props?.modelValue)
 const isDropdownOpened = ref<boolean>(false)
 function buttonClick() {
   isDropdownOpened.value = !isDropdownOpened.value
-  $emit('buttonClick')
+  emit('buttonClick')
 }
 
 function selectOption(option: object) {
@@ -63,7 +63,7 @@ function selectOption(option: object) {
     selectedOption.value = option
   }
   console.log('selectedOption.value', selectedOption.value)
-  $emit('update:modelValue', selectedOption.value)
+  emit('update:modelValue', selectedOption.value)
   isDropdownOpened.value = false
 }
 

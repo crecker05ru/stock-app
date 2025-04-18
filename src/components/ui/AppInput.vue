@@ -1,11 +1,11 @@
 <template>
   <div class="app-input">
-    <span class="app-input__label">{{ $props?.label }}</span>
-    <span class="app-input__search-icon" v-if="$props?.isSearch"></span>
+    <span class="app-input__label">{{ props?.label }}</span>
+    <span class="app-input__search-icon" v-if="props?.isSearch"></span>
     <input
       class="app-input__input"
-      :placeholder="$props?.placeholder"
-      :type="$props?.type"
+      :placeholder="props?.placeholder"
+      :type="props?.type"
       @change="inputChange"
       @input="onInput"
       v-model="inputValue"
@@ -18,7 +18,7 @@ const $emit = defineEmits<{
   inputChange: [value: Event]
   'update:modelValue': [value: string | number]
 }>()
-const $props = defineProps<{
+const props = defineProps<{
   label?: string
   placeholder?: string
   type?: string
@@ -38,13 +38,13 @@ function onInput(event: Event) {
   $emit('update:modelValue', value)
 }
 watch(
-  () => $props.modelValue,
+  () => props.modelValue,
   () => {
-    inputValue.value = $props.modelValue
+    inputValue.value = props.modelValue
   },
 )
 onMounted(() => {
-  // inputValue.value = $props.modelValue
+  // inputValue.value = props.modelValue
 })
 </script>
 <style lang="scss" scoped>

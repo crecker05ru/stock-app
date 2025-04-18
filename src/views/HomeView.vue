@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="home__filters">
-      <FilterBlock class="home__filter" />
+      <FilterBlock class="home__filter" v-model="tiresFiltersData" />
     </div>
     <div class="home__banners"></div>
     <div class="home__categories">
@@ -34,6 +34,7 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
@@ -96,6 +97,16 @@ const stockItems = [
     count: 1,
   },
 ]
+
+const tiresFiltersData = ref({
+  width: '',
+  height: '',
+  diametr: '',
+  manufactor: '',
+  season: '',
+  outerDiametr: '',
+  options: [],
+})
 </script>
 <style lang="scss" scoped>
 .home {

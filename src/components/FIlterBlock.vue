@@ -9,7 +9,7 @@
 
     <div class="tyre-filter__body">
       <div class="tyre-filter__selectors">
-        <div class="tyre-filter__selector">Ширина</div>
+        <AppSelect placeholder="Ширина" v-model="filtersData.width" />
         <div class="tyre-filter__selector">Высота</div>
         <div class="tyre-filter__selector">Диаметр</div>
         <div class="tyre-filter__selector">Производитель</div>
@@ -17,10 +17,11 @@
         <div class="tyre-filter__selector">Вн-ий диаметр</div>
       </div>
       <div class="tyre-filter__checkboxes">
-        <label class="tyre-filter__checkbox">
+        <!-- <label class="tyre-filter__checkbox">
           <input type="checkbox" />
           <span>Спорт-пакет</span>
-        </label>
+        </label> -->
+        <AppCheckbox label="Спорт-пакет" value="sport" v-model="filtersData.options" />
         <label class="tyre-filter__checkbox">
           <input type="checkbox" />
           <span>Run Flat</span>
@@ -37,10 +38,48 @@
   </div>
 </template>
 <script setup lang="ts">
-import { defineProps } from 'vue'
-const $props = defineProps<{
-  options?: object
+import { defineProps, defineEmits, toRef, ref, watch, onMounted } from 'vue'
+import AppSelect from '@/components/ui/AppSelect.vue'
+import AppCheckbox from '@/components/ui/AppCheckbox.vue'
+
+const emit = defineEmits<{
+  buttonClick: [value: void]
+  'update:modelValue': [value: object | undefined]
 }>()
+
+const props = defineProps<{
+  modelValue?: object | string
+  label?: string
+  placeholder?: string
+  options?: object
+  optionNameField?: object[keyof object]
+  optionKeyField?: object[keyof object]
+}>()
+
+// const filtersData = toRef<object | undefined>(props?.modelValue)
+
+const filtersData = ref({
+  width: '',
+  height: '',
+  diametr: '',
+  manufactor: '',
+  season: '',
+  outerDiametr: '',
+  options: [],
+})
+
+watch(
+  filtersData.value,
+  () => {
+    console.log('filtersData.value', filtersData.value)
+    emit('update:modelValue', filtersData.value)
+  },
+  { deep: true },
+)
+
+onMounted(() => {
+  // filtersData.value = props.modelValue
+})
 </script>
 <style scoped lang="scss">
 .tyre-filter {

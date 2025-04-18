@@ -162,6 +162,24 @@ sqlite3
 const chinook = new sqlite3.Database('./server/chinook.db')
 console.log({ db })
 
+export const all = async (db, sql) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, (err, res) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+  })
+}
+
+export const selectAllFromTable = async (db, table) => {
+  return new Promise((resolve, reject) => {
+    db.all(`SELECT * FROM ${table}`, (err, res) => {
+      if (err) reject(err)
+      resolve(res)
+    })
+  })
+}
+
 export const execute = async (db, sql) => {
   return new Promise((resolve, reject) => {
     db.exec(sql, (err) => {
@@ -274,9 +292,8 @@ app.get('/chinook', async (req, res) => {
 
 app.get('/tables', (req, res) => {
   chinook.all("SELECT name FROM sqlite_master WHERE type='table'", function (err, tables) {
-    console.log('err', err)
+    console.log('all err', err)
     console.log('tables', tables)
-
     res.send({ tables })
   })
 })
@@ -287,10 +304,22 @@ app.post('/chinook/execute', async (req, res) => {
   }
   try {
     await execute(chinook, `${req.body.value}`)
+    // chinook.all('SELECT * FROM products', function (err, products) {
+    //   console.log('all err', err)
+    //   console.log('products', products)
+    //   res.send({ products })
+    // })
+    await all(chinook, `SELECT * FROM products`)
+      .then((products) => {
+        console.log('products', products)
+        res.send({ products })
+      })
+      .catch((err) => console.log('all err', err))
   } catch (error) {
-    console.log(error)
+    console.log('/chinook/execute', error)
+    res.send('chinook error', error)
   } finally {
-    res.send('chinook success')
+    // res.send('chinook success')
   }
 })
 

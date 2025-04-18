@@ -31,7 +31,7 @@
     </div>
     <AppButton label="Подтвердить" @click="submit" />
     <div>Выбранные опции {{ selectedOptions }}</div>
-    <!-- <AppButton label="Tables" @click="getTables" /> -->
+    <AppButton label="Tables" @click="getTables" />
     <section class="admin-stock__section">
       <textarea v-if="data" :modelValue="data"></textarea>
       <span v-if="data">{{ data }}</span>
@@ -203,17 +203,39 @@ function submit() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
 
-  fetch('http://localhost:3000/db/run', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ value: inputValue.value }),
-  }).then((res) => {
-    console.log('res', res)
-    getDataFromDB()
-    inputValue.value = ''
-  })
+  // fetch('http://localhost:3000/db/run', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({ value: inputValue.value }),
+  // }).then((res) => {
+  //   console.log('res', res)
+  //   getDataFromDB()
+  //   inputValue.value = ''
+  // })
+
+  const queryString: string = `/chinook/execute${selectedOptions.value.operation}`
+  const sqlString: string = `SELECT * FROM ${selectedOptions.value.table}`
+  console.log('sqlString', sqlString)
+
+  if (selectedOptions.value.operation === 'GET') {
+    fetch('http://localhost:3000/chinook').then((res) => {
+      console.log('res', res)
+      inputValue.value = ''
+    })
+  } else {
+    fetch('http://localhost:3000/chinook/execute', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ value: inputValue.value }),
+    }).then((res) => {
+      console.log('res', res)
+      inputValue.value = ''
+    })
+  }
 }
 
 function execute() {
