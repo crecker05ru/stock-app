@@ -25,6 +25,14 @@ const router = createRouter({
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AdminStockView.vue'),
     },
+    {
+      path: '/product-details',
+      name: 'productDetails',
+      // route level code-splitting
+      // this generates a separate chunk (admin-stock.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ProductDetailsView.vue'),
+    },
   ],
 })
 

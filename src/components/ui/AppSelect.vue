@@ -78,7 +78,7 @@ console.log('props', props)
   border: 1px solid var(--border-color-block);
   border-radius: var(--border-radius-button);
   background-color: var(--background-color-item);
-  box-shadow: var(--box-shadow-button);
+  // box-shadow: var(--box-shadow-button);
   &__window {
     border-radius: var(--border-radius-button);
     background-color: var(--background-color-item);
@@ -93,6 +93,9 @@ console.log('props', props)
     &_active {
       transform: rotate(-90deg);
     }
+  }
+  &__placeholder {
+    color: var(--color-text-button);
   }
   &__dropdown-list {
     display: none;

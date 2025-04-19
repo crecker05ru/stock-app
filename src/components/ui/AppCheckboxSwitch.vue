@@ -1,7 +1,8 @@
 <template>
-  <label class="app-checkbox">
+  <label class="app-switch">
+    <span :class="['app-switch__ball', { 'app-switch__ball_active': isChecked }]"></span>
     <input
-      :class="['app-checkbox__input', { 'app-checkbox__input_checked': isChecked }]"
+      :class="['app-switch__input', { 'app-switch__input_checked': isChecked }]"
       :placeholder="props?.placeholder"
       type="checkbox"
       :name="props?.name"
@@ -10,7 +11,7 @@
       @input="onInput"
       v-model="inputValue"
     />
-    <span class="app-checkbox__label">{{ props?.label }}</span>
+    <span class="app-switch__label">{{ props?.label }}</span>
   </label>
 </template>
 <script setup lang="ts">
@@ -63,41 +64,55 @@ onMounted(() => {
 })
 </script>
 <style lang="scss" scoped>
-.app-checkbox {
+.app-switch {
   position: relative;
-  display: flex;
+  // display: flex;
+  padding: 5px;
+  width: 42px;
+  height: 25px;
   color: var(--color-text-button);
   cursor: pointer;
-  & .app-checkbox__input_checked:checked {
+  & .app-switch__input_checked:checked {
     background-color: var(--item-main-color);
   }
-  & .app-checkbox__input_checked:checked::after {
-    display: block;
-    content: '';
-    flex-shrink: 0;
-    top: 0px;
-    left: 0px;
-    width: 10px;
-    height: 10px;
-    margin: 5px;
-    background-color: var(--background-color-checked);
-    border-radius: var(--border-radius-checkbox);
-  }
-  & .app-checkbox__input_checked:checked + span {
+  & .app-switch__input_checked:checked + span {
     color: var(--color-text-main);
   }
+
+  &__ball {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    z-index: +1;
+    display: block;
+    flex-shrink: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    border: 1px solid var(--border-color-block);
+    background-color: var(--color-text-header);
+    transition: transform 250ms;
+    &_active {
+      transform: translateX(100%);
+      background-color: var(--color-text-main);
+      border-color: var(--color-text-main);
+    }
+  }
   & span {
-    margin-left: 10px;
     user-select: none;
   }
   &__input {
+    position: absolute;
+    left: 0;
+    top: 0;
     display: block;
-    width: 21px;
-    height: 22px;
+    width: 40px;
+    height: 25px;
     flex-shrink: 0;
     outline: none;
     border: 1px solid var(--border-color-block);
-    border-radius: var(--border-radius-checkbox);
+    border-radius: var(--border-radius-switch);
+    background-color: var(--color-item-default);
     font-size: 15px;
     appearance: none;
     cursor: pointer;

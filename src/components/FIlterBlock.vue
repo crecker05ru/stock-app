@@ -18,16 +18,17 @@
       </div>
       <div class="tyre-filter__checkboxes">
         <!-- <label class="tyre-filter__checkbox">
-          <input type="checkbox" />
+          <input type="checkbox" value="sport" v-model="filtersData.options" />
           <span>Спорт-пакет</span>
         </label> -->
         <AppCheckbox label="Спорт-пакет" value="sport" v-model="filtersData.options" />
-        <label class="tyre-filter__checkbox">
-          <input type="checkbox" />
+        <!-- <label class="tyre-filter__checkbox">
+          <input type="checkbox" value="runflat" v-model="filtersData.options" />
           <span>Run Flat</span>
-        </label>
+        </label> -->
+        <AppCheckbox label="Run Flat" value="runflat" v-model="filtersData.options" />
         <label class="tyre-filter__checkbox">
-          <input type="checkbox" />
+          <input type="checkbox" v-model="filtersData.options" />
           <span>Усыпанность (с)</span>
         </label>
       </div>
