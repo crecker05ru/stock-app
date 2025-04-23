@@ -4,49 +4,17 @@
       <FilterBlock class="home__filter" v-model="tiresFiltersData" />
     </div>
     <div class="home__banners"></div>
-    <div class="home__categories">
-      <div class="home__category-item">
-        <img class="home__category-item-image" src="@/assets/images/main/category_tires.png" />
-        <span class="home__category-item-title">Шины </span>
-        <IconArrowRight class="home__category-item-icon" />
-      </div>
-      <div class="home__category-item category-item--height_double">
-        <div class="home__category-item-wrapper">
-          <span class="home__category-item-title_double">Мотошины</span
-          ><IconArrowRight class="home__category-item-icon_double" />
-        </div>
-        <img
-          class="home__category-item-image_double"
-          src="@/assets/images/main/category_tires_motorcycle.png"
-        />
-      </div>
-      <div class="home__category-item category-item--height_double">
-        <div class="home__category-item-wrapper">
-          <span class="home__category-item-title_double">Грузовые</span
-          ><IconArrowRight class="home__category-item-icon_double" />
-        </div>
-        <img
-          class="home__category-item-image_truck"
-          src="@/assets/images/main/category_tires_truck.png"
-        />
-      </div>
-      <div class="home__category-item">
-        <img class="home__category-item-image_rims" src="@/assets/images/main/category_rims.png" />
-        <span class="home__category-item-title">Диски</span
-        ><IconArrowRight class="home__category-item-icon" />
-      </div>
-    </div>
     <section class="home__section">
       <h2 class="home__section-title">Популярные шины</h2>
       <p class="home__section-label">Смотреть все</p>
-      <div class="home__section-list">
-        <StockItem v-for="(item, index) in stockItems" :key="index" />
+      <div class="home__section-list" v-if="tiresList?.length">
+        <StockItem v-for="(item, index) in tiresList" :key="index" :data="item" />
       </div>
     </section>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
@@ -118,6 +86,26 @@ const tiresFiltersData = ref({
   season: '',
   outerDiametr: '',
   options: [],
+})
+
+const tiresList = ref([])
+async function getTires() {
+  console.log('getTires')
+  try {
+    const response = await fetch('http://localhost:3000/exceldatabase')
+    const body = await response.json()
+    tiresList.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// await getTires()
+// getTires()
+
+onMounted(() => {
+  console.log('onMounted', onMounted)
+  getTires()
 })
 </script>
 <style lang="scss" scoped>

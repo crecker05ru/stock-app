@@ -15,8 +15,8 @@
       </div>
       <nav class="header__nav">
         <div class="header__nav-wrapper app-wrapper">
-          <RouterLink class="header__nav-link" to="/">ШИНЫ</RouterLink>
-          <RouterLink class="header__nav-link" to="/about">ГРУЗОВЫЕ ШИНЫ</RouterLink>
+          <RouterLink class="header__nav-link" to="/tires">ШИНЫ</RouterLink>
+          <RouterLink class="header__nav-link" to="/">ГРУЗОВЫЕ ШИНЫ</RouterLink>
           <RouterLink class="header__nav-link" to="/about">МОТОШИНЫ</RouterLink>
           <RouterLink class="header__nav-link" to="/about">ДИСКИ</RouterLink>
           <RouterLink class="header__nav-link" to="/about">ПУНКТЫ ВЫДАЧИ</RouterLink>

@@ -105,11 +105,13 @@
 // export const viteNodeServer = app
 
 import sqlite3 from 'sqlite3'
+import ExcelJS from 'exceljs'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 
 const app = express()
+const workbook = new ExcelJS.Workbook()
 const urlencodedParser = express.urlencoded({ extended: false })
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -160,6 +162,7 @@ const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)
 sqlite3
 const chinook = new sqlite3.Database('./server/chinook.db')
+const exceldatabse = new sqlite3.Database('./server/exceldatabase.db')
 console.log({ db })
 
 export const all = async (db, sql) => {
@@ -205,6 +208,88 @@ export const insert = async (db, sql, params = []) => {
     })
   })
 }
+
+export const fetchAll = async (db, sql, params) => {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err)
+      resolve(rows)
+    })
+  })
+}
+
+export const fetchFirst = async (db, sql, params) => {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err)
+      resolve(row)
+    })
+  })
+}
+
+async function importExcelToSQLite(excelFilePath, dbFilePath, tableName) {
+  // Открываем базу данных SQLite
+  const db = new sqlite3.Database(dbFilePath)
+
+  // Читаем Excel файл
+  const workbook = new ExcelJS.Workbook()
+  await workbook.xlsx.readFile(excelFilePath)
+
+  // Берем первый лист
+  const worksheet = workbook.getWorksheet(1)
+
+  // Получаем заголовки столбцов (первая строка)
+  const headers = []
+  console.log('worksheet', worksheet)
+  worksheet.getRow(1).eachCell((cell, colNumber) => {
+    console.log('cell', cell)
+    headers.push(cell.value)
+  })
+
+  // Создаем таблицу в SQLite
+  const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (
+      ${headers.map((header) => `"${header}" TEXT`).join(', ')}
+  )`
+
+  db.run(createTableQuery, (err) => {
+    if (err) {
+      console.error('Ошибка при создании таблицы:', err)
+      return
+    }
+
+    console.log(`Таблица "${tableName}" создана или уже существует`)
+
+    // Вставляем данные построчно
+    const insertStmt = db.prepare(
+      `INSERT INTO ${tableName} (${headers.map((h) => `"${h}"`).join(', ')}) VALUES (${headers.map(() => '?').join(', ')})`,
+    )
+
+    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+      if (rowNumber === 1) return // Пропускаем заголовки
+
+      const rowData = []
+      row.eachCell({ includeEmpty: true }, (cell) => {
+        rowData.push(cell.value)
+      })
+
+      insertStmt.run(rowData, (err) => {
+        if (err) {
+          console.error('Ошибка при вставке строки:', rowNumber, err)
+        }
+      })
+    })
+
+    insertStmt.finalize(() => {
+      console.log('Импорт завершен')
+      db.close()
+    })
+  })
+}
+
+// Использование
+// importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
+//   console.error('Ошибка:', err),
+// )
 
 const sqlInsert = `INSERT INTO products(name, price) VALUES(?, ?)`
 
@@ -286,6 +371,22 @@ app.get('/chinook', async (req, res) => {
   chinook.get('SELECT * FROM products', (err, row) => {
     console.error('err', err)
     console.log('chinook res', row)
+    res.send(row)
+  })
+})
+
+app.get('/exceldatabase/1', async (req, res) => {
+  exceldatabse.get('SELECT * FROM tires', (err, row) => {
+    console.error('err', err)
+    console.log('exceldatabase res', row)
+    res.send(row)
+  })
+})
+
+app.get('/exceldatabase', async (req, res) => {
+  exceldatabse.all('SELECT * FROM tires LIMIT 100', (err, row) => {
+    console.error('err', err)
+    console.log('exceldatabase res', row)
     res.send(row)
   })
 })

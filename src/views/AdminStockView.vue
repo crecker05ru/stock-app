@@ -32,6 +32,7 @@
     <AppButton label="Подтвердить" @click="submit" />
     <div>Выбранные опции {{ selectedOptions }}</div>
     <AppButton label="Tables" @click="getTables" />
+    <AppButton label="Tires" @click="getDataFromExceldatabse" />
     <section class="admin-stock__section">
       <textarea v-if="data" :modelValue="data"></textarea>
       <span v-if="data">{{ data }}</span>
@@ -192,6 +193,16 @@ async function getDataFromChinook() {
   // })
   try {
     const response = await fetch('http://localhost:3000/chinook')
+    const body = await response.json()
+    data.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+async function getDataFromExceldatabse() {
+  try {
+    const response = await fetch('http://localhost:3000/exceldatabase')
     const body = await response.json()
     data.value = body
   } catch (e) {
