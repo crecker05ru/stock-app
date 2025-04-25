@@ -40,7 +40,7 @@
       <h2 class="home__section-title">Популярные шины</h2>
       <p class="home__section-label">Смотреть все</p>
       <div class="home__section-list">
-        <StockItem v-for="(item, index) in stockItems" :key="index" />
+        <StockItem v-for="(item, index) in stockItems" :key="index" @cartClick="onCartClick" />
       </div>
     </section>
   </div>
@@ -51,6 +51,9 @@ import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
 const stockItems = [
   {
     rating: 4.84,
@@ -119,6 +122,10 @@ const tiresFiltersData = ref({
   outerDiametr: '',
   options: [],
 })
+
+function onCartClick(count: number) {
+  userStore.updateCart(count)
+}
 </script>
 <style lang="scss" scoped>
 .home {

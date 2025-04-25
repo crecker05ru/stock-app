@@ -27,19 +27,22 @@
               <slot :name="`cell(${cellIndex})`" :cell="{ cell: row?.[cell], cellIndex }">{{
                 tableHeadScheme ? row?.[cell] : row?.[cellIndex]
               }}</slot>
-              <slot :name="`cell(buttons)`" :cell="{ cell, cellIndex }" ref="buttonsElement"></slot>
             </div>
           </template>
+          <slot :name="`cell(buttons)`" :cell="{ cell, cellIndex }" ref="buttonsElement"></slot>
         </div>
       </div>
     </div>
-    <div class="app-table__footer"><slot :name="'footer'"></slot></div>
+    <div class="app-table__footer">
+      <slot :name="'footer'"> <AppPaginator /></slot>
+    </div>
   </div>
 </template>
 <script setup lang="ts">
 import { onUpdated, nextTick, ref } from 'vue'
 import IconMinus from '../icons/IconMinus.vue'
 import IconPlus from '../icons/IconPlus.vue'
+import AppPaginator from './AppPaginator.vue'
 // import { ref } from 'vue';
 // import { $ref } from 'vue/macros'
 

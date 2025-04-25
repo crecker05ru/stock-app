@@ -34,7 +34,7 @@
     </div>
     <div class="stock-item__description">{{ itemData?.name }}</div>
     <div class="stock-item__footer">
-      <div class="stock-item__footer-count"><AppCounter v-model="itemData.count" /></div>
+      <div class="stock-item__footer-count"><AppCounter v-model="count" /></div>
       <AppButton label="В корзину" @click="cartClick" />
     </div>
   </div>
@@ -58,7 +58,7 @@ const props = defineProps({
   modelValue: { type: Object, required: false },
   data: { type: Object, required: true },
 })
-
+const count = ref(0)
 const itemData = ref({
   name: '',
   season: '',
@@ -73,7 +73,7 @@ const itemData = ref({
 })
 
 function cartClick() {
-  emit('cartClick', itemData.value.count)
+  emit('cartClick', count.value)
 }
 
 function favoriteClick() {}

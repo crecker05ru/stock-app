@@ -45,12 +45,24 @@
         <li v-for="(fetch, index) in fetchs" :key="index">{{ fetch }}</li>
       </ul>
       <div>
-        <AppTable :tableHeadScheme="tableHeadScheme" :tableItems="tableItems">
+        <AppTable
+          class="admin-stock__table"
+          :tableHeadScheme="tableHeadScheme"
+          :tableItems="tableItems"
+        >
           <template #head(name)> Наименование </template>
           <template #head(profile)>Размер</template>
           <template #head(season)>Тип</template>
           <template #head(count)>Наличие</template>
           <template #head(price)>Цена</template>
+          <template #cell(buttons)>
+            <div class="admin-stock__table-buttons">
+              <AppButton class="admin-stock__table-button"><IconShoppingCart /></AppButton>
+              <AppButton class="admin-stock__table-button admin-stock__table-button--favorite"
+                ><IconFavorite
+              /></AppButton>
+            </div>
+          </template>
         </AppTable>
       </div>
     </section>
@@ -65,6 +77,8 @@ import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppTable from '@/components/ui/AppTable.vue'
+import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
+import IconFavorite from '@/components/icons/IconFavorite.vue'
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
 const stockItems = [
@@ -374,6 +388,23 @@ onMounted(() => {
     display: flex;
     gap: 16px;
     align-items: center;
+  }
+  &__table-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  &__table-button {
+    width: 39px;
+
+    :deep(.app-button__button) {
+      padding: 8px;
+    }
+
+    &--favorite {
+      :deep(.app-button__button) {
+        padding: 10px 8px 4px;
+      }
+    }
   }
 }
 

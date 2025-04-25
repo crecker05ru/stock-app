@@ -1,11 +1,18 @@
 <template>
-  <div class="app-button__button-wrapper">
+  <div
+    :class="[
+      'app-button__button-wrapper',
+      { 'app-button__button-wrapper--wrapper': $props?.isWrapper },
+    ]"
+  >
     <button
       :class="['app-button__button', { 'app-button__button--wrapper': $props?.isWrapper }]"
       @click="buttonClick"
     >
       <slot>
-        <span class="app-button__button-text" v-if="$props?.label">{{ $props?.label }}</span></slot
+        <span class="app-button__button-text" v-if="$props?.label"
+          ><slot name="label">{{ $props?.label }}</slot></span
+        ></slot
       >
     </button>
   </div>
@@ -26,14 +33,24 @@ function buttonClick() {
 </script>
 <style lang="scss" scoped>
 .app-button {
+  &__button-wrapper {
+    width: fit-content;
+    border-radius: var(--border-radius-button);
+    background-color: var(--background-color-button-translate);
+    &--wrapper {
+      background-color: var(--background-color-button-second-translate);
+    }
+  }
   &__button {
-    width: 134px;
+    width: 100%;
+    // max-width: fit-content;
     height: 43px;
     padding: 0;
+    // padding-bottom: 2px;
     border-radius: var(--border-radius-button);
     background-color: var(--background-color-button-translate);
     box-shadow: var(--box-shadow-button);
-    &:active .tyre-filter__submit-button-text {
+    &:active .app-button__button-text {
       transform: translate(0px, 0px);
     }
     &--wrapper {
@@ -46,6 +63,10 @@ function buttonClick() {
       box-shadow: none;
       border-color: var(--background-color-button-second);
       text-align: center;
+
+      &:active .app-button__button-text {
+        transform: translate(0px, 0px);
+      }
     }
   }
   &__button-text {

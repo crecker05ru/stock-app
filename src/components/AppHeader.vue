@@ -21,7 +21,7 @@
           <AppButton class="header__cart-button"><IconShoppingCart /></AppButton>
           <div class="header__cart-block">
             <div class="header__cart-text">Корзина</div>
-            <div class="header__cart-items">{{ userData?.cartItems }} товаров</div>
+            <div class="header__cart-items">{{ userStore?.userData?.cartItems }} товаров</div>
           </div>
         </div>
       </div>
@@ -47,10 +47,13 @@ import IconFavorite from '@/components/icons/IconFavorite.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
 import IconLogin from '@/components/icons/IconLogin.vue'
 import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
 
-const userData = ref({
-  cartItems: 0,
-})
+const userStore = useUserStore()
+
+// const userData = ref({
+//   cartItems: 0,
+// })
 
 function favoriteClick() {}
 
