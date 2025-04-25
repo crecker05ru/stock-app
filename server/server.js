@@ -287,9 +287,9 @@ async function importExcelToSQLite(excelFilePath, dbFilePath, tableName) {
 }
 
 // Использование
-// importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
-//   console.error('Ошибка:', err),
-// )
+importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
+  console.error('Ошибка:', err),
+)
 
 const sqlInsert = `INSERT INTO products(name, price) VALUES(?, ?)`
 

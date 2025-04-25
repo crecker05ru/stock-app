@@ -44,22 +44,27 @@
       <ul>
         <li v-for="(fetch, index) in fetchs" :key="index">{{ fetch }}</li>
       </ul>
-      <h2 class="admin-stock__section-title">Популярные шины</h2>
-      <p class="admin-stock__section-label">Смотреть все</p>
-      <div class="admin-stock__section-list">
-        <StockItem v-for="(item, index) in stockItems" :key="index" />
+      <div>
+        <AppTable :tableHeadScheme="tableHeadScheme" :tableItems="tableItems">
+          <template #head(name)> Наименование </template>
+          <template #head(profile)>Размер</template>
+          <template #head(season)>Тип</template>
+          <template #head(count)>Наличие</template>
+          <template #head(price)>Цена</template>
+        </AppTable>
       </div>
     </section>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
+import AppTable from '@/components/ui/AppTable.vue'
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
 const stockItems = [
@@ -165,6 +170,26 @@ const functionOptions = [
     name: 'finalize',
   },
 ]
+
+const tableScheme = [
+  {
+    name: {
+      label: 'Наименование',
+    },
+  },
+]
+const tableHeadScheme = ['name', 'profile', 'season', 'count', 'price']
+// const tableShowColumns = ['name', 'size_type', 'season', 'count', 'price']
+const tableItems = ref([
+  {
+    name: 'Viatti Strada Asimmetrico 175/70 R13 82H',
+    size_type: '175/70 R13 82T',
+    season: 'summer',
+    count: 3,
+    price: 2500,
+  },
+])
+
 const selectedTableOption = ref()
 const selectedOptions = ref({
   table: '',
@@ -299,6 +324,24 @@ async function getTables() {
     console.log(e)
   }
 }
+
+async function getTires() {
+  console.log('getTires')
+  try {
+    const response = await fetch('http://localhost:3000/exceldatabase')
+    const body = await response.json()
+    tableItems.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// await getTires()
+// getTires()
+
+onMounted(() => {
+  getTires()
+})
 </script>
 <style lang="scss" scoped>
 .admin-stock {

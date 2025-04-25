@@ -2,8 +2,8 @@
   <div class="stock-item">
     <div class="stock-item__seasons"><img src="@/assets/icons/sun.png" /></div>
     <div class="stock-item__head-buttons">
-      <AppButton :isWrapper="true" @buttonClick="''"><IconFavorite /></AppButton>
-      <AppButton :isWrapper="true" @buttonClick="''"><IconSettings /></AppButton>
+      <AppButton :isWrapper="true" @click.stop="favoriteClick"><IconFavorite /></AppButton>
+      <AppButton :isWrapper="true" @click.stop="settingsClick"><IconSettings /></AppButton>
     </div>
     <div class="stock-item__image-wrapper">
       <img class="stock-item__image" src="@/assets/images/items/yokohoma_bluearth.png" />
@@ -35,7 +35,7 @@
     <div class="stock-item__description">{{ itemData?.name }}</div>
     <div class="stock-item__footer">
       <div class="stock-item__footer-count"><AppCounter v-model="itemData.count" /></div>
-      <AppButton label="В корзину" />
+      <AppButton label="В корзину" @click="cartClick" />
     </div>
   </div>
 </template>
@@ -51,6 +51,7 @@ import { onMounted, ref } from 'vue'
 
 const emit = defineEmits<{
   'update:modelValue': [value: number]
+  cartClick: [count: number]
 }>()
 
 const props = defineProps({
@@ -71,6 +72,13 @@ const itemData = ref({
   rating: 4.84,
 })
 
+function cartClick() {
+  emit('cartClick', itemData.value.count)
+}
+
+function favoriteClick() {}
+
+function settingsClick() {}
 onMounted(() => {
   itemData.value = props?.data
 })

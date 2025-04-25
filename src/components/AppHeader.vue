@@ -7,11 +7,23 @@
         <div class="header__top-element">Покупателям</div>
         <!-- <input placeholder="Поиск по сайту" /> -->
         <AppInput placeholder="Поиск по сайту" />
-        <button class="header__button-auth">Войти</button>
-        <button class="header__button-auth" @click="$router.push('/admin-stock')">Админка</button>
+        <button class="header__button-login"><IconLogin />Войти</button>
+        <AppButton class="header__button-auth" @click="$router.push('/admin-stock')"
+          >Админка</AppButton
+        >
       </div>
       <div class="header__center">
-        <div>Корзина</div>
+        <div class="header__center-buttons">
+          <IconFavorite class="header__center-button--favorite" />
+          <IconSettings class="header__center-button--settings" />
+        </div>
+        <div class="header__center-cart header__cart">
+          <AppButton class="header__cart-button"><IconShoppingCart /></AppButton>
+          <div class="header__cart-block">
+            <div class="header__cart-text">Корзина</div>
+            <div class="header__cart-items">{{ userData?.cartItems }} товаров</div>
+          </div>
+        </div>
       </div>
       <nav class="header__nav">
         <div class="header__nav-wrapper app-wrapper">
@@ -29,6 +41,20 @@
 </template>
 <script setup lang="ts">
 import AppInput from '@/components/ui/AppInput.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
+import IconFavorite from '@/components/icons/IconFavorite.vue'
+import IconSettings from '@/components/icons/IconSettings.vue'
+import IconLogin from '@/components/icons/IconLogin.vue'
+import { ref } from 'vue'
+
+const userData = ref({
+  cartItems: 0,
+})
+
+function favoriteClick() {}
+
+function settingsClick() {}
 </script>
 <style lang="scss" scoped>
 .header {
@@ -50,8 +76,32 @@ import AppInput from '@/components/ui/AppInput.vue'
     height: 50px;
     color: var(--color-text-header);
   }
+  &__button-login {
+    max-width: 70px;
+    background-color: transparent;
+  }
   &__button-auth {
     max-width: 70px;
+    font-weight: 500;
+    font-size: 15px;
+  }
+  &__center {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  &__center-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  &__center-button {
+    &--favorite {
+      align-self: center;
+    }
+  }
+  &__cart {
+    display: flex;
+    gap: 10px;
   }
 }
 </style>

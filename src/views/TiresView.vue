@@ -8,7 +8,12 @@
       <h2 class="home__section-title">Популярные шины</h2>
       <p class="home__section-label">Смотреть все</p>
       <div class="home__section-list" v-if="tiresList?.length">
-        <StockItem v-for="(item, index) in tiresList" :key="index" :data="item" />
+        <StockItem
+          v-for="(item, index) in tiresList"
+          :key="index"
+          :data="item"
+          @click="$router.push(`tires/${index}`)"
+        />
       </div>
     </section>
   </div>

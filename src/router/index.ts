@@ -38,6 +38,11 @@ const router = createRouter({
       name: 'tires',
       component: () => import('../views/TiresView.vue'),
     },
+    {
+      path: '/tires/:id',
+      name: 'tireId',
+      component: () => import('../views/TireIDView.vue'),
+    },
   ],
 })
 
