@@ -93,7 +93,8 @@ const tiresFiltersData = ref({
   options: [],
 })
 
-const tiresList = ref([])
+const tiresList = ref([{ name: '', count: 0, price: 0 }])
+
 async function getTires() {
   console.log('getTires')
   try {

@@ -15,7 +15,7 @@
     <button
       :class="[
         'app-counter__button app-counter__button--plus',
-        { 'app-counter__button--disabled': counter >= props?.maxCount },
+        { 'app-counter__button--disabled': counter >= maxCount },
       ]"
       @click="addCount"
     >
@@ -33,15 +33,15 @@ const emit = defineEmits<{
   'update:modelValue': [value: number]
 }>()
 
-const props = defineProps({
+const { modelValue = 0, maxCount = 999 } = defineProps({
   modelValue: { type: Number, required: true },
   maxCount: { type: Number, required: false },
 })
 
-let counter = $ref<number>(props.modelValue)
+let counter = $ref<number>(modelValue)
 
 function addCount() {
-  if (props?.maxCount && counter >= props?.maxCount) {
+  if (counter >= maxCount) {
   } else {
     counter++
     emit('update:modelValue', counter)

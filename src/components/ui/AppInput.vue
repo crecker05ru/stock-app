@@ -8,7 +8,7 @@
       :type="props?.type"
       @change="inputChange"
       @input="onInput"
-      v-model="inputValue"
+      v-model="modelValue"
     />
   </div>
 </template>
@@ -18,12 +18,14 @@ const $emit = defineEmits<{
   inputChange: [value: Event]
   'update:modelValue': [value: string | number]
 }>()
+
+const modelValue = defineModel()
 const props = defineProps<{
   label?: string
   placeholder?: string
   type?: string
   isSearch?: boolean
-  modelValue?: string | number
+  // modelValue?: string | number
 }>()
 
 const inputValue = ref('')
@@ -37,12 +39,12 @@ function onInput(event: Event) {
   const value = (event?.target as HTMLInputElement)?.value
   $emit('update:modelValue', value)
 }
-watch(
-  () => props.modelValue,
-  () => {
-    inputValue.value = props.modelValue
-  },
-)
+// watch(
+//   () => props.modelValue,
+//   () => {
+//     inputValue.value = props.modelValue
+//   },
+// )
 onMounted(() => {
   // inputValue.value = props.modelValue
 })
