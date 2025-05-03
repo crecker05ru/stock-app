@@ -9,7 +9,7 @@
         <AppInput placeholder="Поиск по сайту" />
         <button class="header__button-login"><IconLogin />Войти</button>
         <AppButton class="header__button-auth" @click="$router.push('/admin-stock')"
-          >Админка</AppButton
+          ><template #label>Админка</template></AppButton
         >
       </div>
       <div class="header__center">
@@ -84,7 +84,7 @@ function settingsClick() {}
     background-color: transparent;
   }
   &__button-auth {
-    max-width: 70px;
+    max-width: 120px;
     font-weight: 500;
     font-size: 15px;
   }

@@ -9,7 +9,21 @@ import AppFooter from './components/AppFooter.vue'
 <template>
   <AppHeader />
   <AppMain>
-    <RouterView />
+    <RouterView v-slot="{ Component }">
+      <template v-if="Component">
+        <Transition mode="out-in">
+          <KeepAlive>
+            <Suspense>
+              <!-- основное содержание -->
+              <component :is="Component"></component>
+
+              <!-- состояние загрузки -->
+              <template #fallback> Загрузка... </template>
+            </Suspense>
+          </KeepAlive>
+        </Transition>
+      </template>
+    </RouterView>
   </AppMain>
   <AppFooter />
 </template>

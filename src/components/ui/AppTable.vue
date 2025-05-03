@@ -29,7 +29,7 @@
               }}</slot>
             </div>
           </template>
-          <slot :name="`cell(buttons)`" :cell="{ cell, cellIndex }" ref="buttonsElement"></slot>
+          <slot :name="`cell(buttons)`" :cell="{ row, rowIndex }" ref="buttonsElement"></slot>
         </div>
       </div>
     </div>
@@ -53,7 +53,7 @@ const emit = defineEmits<{
 const props = defineProps({
   modelValue: { type: Number, required: false },
   tableItems: { type: Object, required: true },
-  tableScheme: { type: Object, required: true },
+  tableScheme: { type: Object, required: false },
   tableHeadScheme: { type: Object, required: false },
 })
 

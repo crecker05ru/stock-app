@@ -40,7 +40,7 @@ const emit = defineEmits<{
 }>()
 
 const props = defineProps({
-  modelValue: { type: Number, required: true },
+  modelValue: { type: Number, required: false },
 })
 
 const currentPage = ref(1)

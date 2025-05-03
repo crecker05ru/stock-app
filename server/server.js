@@ -109,7 +109,16 @@ import ExcelJS from 'exceljs'
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-
+import {
+  importExcelToSQLite,
+  all,
+  selectAllFromTable,
+  execute,
+  insert,
+  fetchAll,
+  fetchFirst,
+  fetchTableHeaders,
+} from './utils.js'
 const app = express()
 const workbook = new ExcelJS.Workbook()
 const urlencodedParser = express.urlencoded({ extended: false })
@@ -160,136 +169,14 @@ app.listen(3000)
 export const viteNodeServer = app
 const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)
-sqlite3
 const chinook = new sqlite3.Database('./server/chinook.db')
 const exceldatabse = new sqlite3.Database('./server/exceldatabase.db')
 console.log({ db })
 
-export const all = async (db, sql) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, (err, res) => {
-      if (err) reject(err)
-      resolve(res)
-    })
-  })
-}
-
-export const selectAllFromTable = async (db, table) => {
-  return new Promise((resolve, reject) => {
-    db.all(`SELECT * FROM ${table}`, (err, res) => {
-      if (err) reject(err)
-      resolve(res)
-    })
-  })
-}
-
-export const execute = async (db, sql) => {
-  return new Promise((resolve, reject) => {
-    db.exec(sql, (err) => {
-      if (err) reject(err)
-      resolve()
-    })
-  })
-}
-
-export const insert = async (db, sql, params = []) => {
-  if (params && params.length > 0) {
-    return new Promise((resolve, reject) => {
-      db.run(sql, params, (err) => {
-        if (err) reject(err)
-        resolve()
-      })
-    })
-  }
-  return new Promise((resolve, reject) => {
-    db.exec(sql, (err) => {
-      if (err) reject(err)
-      resolve()
-    })
-  })
-}
-
-export const fetchAll = async (db, sql, params) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err)
-      resolve(rows)
-    })
-  })
-}
-
-export const fetchFirst = async (db, sql, params) => {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err)
-      resolve(row)
-    })
-  })
-}
-
-async function importExcelToSQLite(excelFilePath, dbFilePath, tableName) {
-  // Открываем базу данных SQLite
-  const db = new sqlite3.Database(dbFilePath)
-
-  // Читаем Excel файл
-  const workbook = new ExcelJS.Workbook()
-  await workbook.xlsx.readFile(excelFilePath)
-
-  // Берем первый лист
-  const worksheet = workbook.getWorksheet(1)
-
-  // Получаем заголовки столбцов (первая строка)
-  const headers = []
-  console.log('worksheet', worksheet)
-  worksheet.getRow(1).eachCell((cell, colNumber) => {
-    console.log('cell', cell)
-    headers.push(cell.value)
-  })
-
-  // Создаем таблицу в SQLite
-  const createTableQuery = `CREATE TABLE IF NOT EXISTS ${tableName} (
-      ${headers.map((header) => `"${header}" TEXT`).join(', ')}
-  )`
-
-  db.run(createTableQuery, (err) => {
-    if (err) {
-      console.error('Ошибка при создании таблицы:', err)
-      return
-    }
-
-    console.log(`Таблица "${tableName}" создана или уже существует`)
-
-    // Вставляем данные построчно
-    const insertStmt = db.prepare(
-      `INSERT INTO ${tableName} (${headers.map((h) => `"${h}"`).join(', ')}) VALUES (${headers.map(() => '?').join(', ')})`,
-    )
-
-    worksheet.eachRow({ includeEmpty: false }, (row, rowNumber) => {
-      if (rowNumber === 1) return // Пропускаем заголовки
-
-      const rowData = []
-      row.eachCell({ includeEmpty: true }, (cell) => {
-        rowData.push(cell.value)
-      })
-
-      insertStmt.run(rowData, (err) => {
-        if (err) {
-          console.error('Ошибка при вставке строки:', rowNumber, err)
-        }
-      })
-    })
-
-    insertStmt.finalize(() => {
-      console.log('Импорт завершен')
-      db.close()
-    })
-  })
-}
-
 // Использование
-importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
-  console.error('Ошибка:', err),
-)
+// importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
+//   console.error('Ошибка:', err),
+// )
 
 const sqlInsert = `INSERT INTO products(name, price) VALUES(?, ?)`
 
@@ -381,6 +268,20 @@ app.get('/exceldatabase/1', async (req, res) => {
     console.log('exceldatabase res', row)
     res.send(row)
   })
+})
+
+app.post('/exceldatabase/headers', async (req, res) => {
+  console.log('/exceldatabase/headers req', req.body)
+  if (!req?.body?.tableName) {
+    res.send('no table name')
+  } else {
+    fetchTableHeaders(exceldatabse, req?.body?.tableName)
+      .then((data) => {
+        console.log('fetchTableHeaders data', data)
+        res.send(data)
+      })
+      .catch((e) => console.log('fetchTableHeaders error', e))
+  }
 })
 
 app.get('/exceldatabase', async (req, res) => {

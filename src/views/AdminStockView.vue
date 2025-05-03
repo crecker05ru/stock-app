@@ -1,7 +1,15 @@
 <template>
   <div class="admin-stock">
+    <Teleport to="body">
+      <ModalSlot :show="showModal" @close="showModal = false">
+        <template #header>
+          <h3>Пользовательский заголовок</h3>
+        </template>
+      </ModalSlot>
+    </Teleport>
     <div class="admin-stock__filters">
-      <!-- <FilterBlock class="admin-stock__filter" /> -->
+      <AppButton @click="showModal = true">Создать продукт</AppButton>
+      <AppButton @click="fetchTableHeaders">Запросить заголовки</AppButton>
     </div>
     <div class="admin-stock__selects">
       <AppSelect
@@ -57,10 +65,12 @@
           <template #head(price)>Цена</template>
           <template #cell(buttons)>
             <div class="admin-stock__table-buttons">
-              <AppButton class="admin-stock__table-button"><IconShoppingCart /></AppButton>
+              <AppButton class="admin-stock__table-button" :isWrapper="true"
+                ><template #icon><IconShoppingCart /></template
+              ></AppButton>
               <AppButton class="admin-stock__table-button admin-stock__table-button--favorite"
-                ><IconFavorite
-              /></AppButton>
+                ><template #icon><IconFavorite /></template
+              ></AppButton>
             </div>
           </template>
         </AppTable>
@@ -79,8 +89,11 @@ import AppSelect from '@/components/ui/AppSelect.vue'
 import AppTable from '@/components/ui/AppTable.vue'
 import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
 import IconFavorite from '@/components/icons/IconFavorite.vue'
+import ModalSlot from '@/components/ModalSlot.vue'
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
+
+const showModal = ref(false)
 const stockItems = [
   {
     rating: 4.84,
@@ -349,7 +362,25 @@ async function getTires() {
     console.log(e)
   }
 }
-
+async function fetchTableHeaders(tableName) {
+  try {
+    const response = await fetch('http://localhost:3000/exceldatabase/headers', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ tableName: 'tires' }),
+    })
+    console.log('response', response)
+    if (response?.ok) {
+      const body = await response.json()
+      console.log('fetchTableHeaders body', body)
+      console.log(Object.keys(body))
+    }
+  } catch (e) {
+    console.log(e)
+  }
+}
 // await getTires()
 // getTires()
 
