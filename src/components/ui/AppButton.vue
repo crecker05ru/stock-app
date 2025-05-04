@@ -8,6 +8,7 @@
     ]"
   >
     <button
+      v-if="!isLoading"
       :class="[
         { 'app-button__button': !$slots.icon },
         { 'app-button__button--wrapper': props?.isWrapper },
@@ -25,6 +26,15 @@
       </span>
       <slot name="icon"></slot>
     </button>
+    <button
+      v-else
+      :class="[
+        { 'app-button__button': !$slots.icon },
+        { 'app-button__button--loading': props?.isWrapper },
+      ]"
+    >
+      Loading
+    </button>
   </div>
 </template>
 <script setup lang="ts">
@@ -35,6 +45,7 @@ const emit = defineEmits<{
 const props = defineProps<{
   label?: string
   isWrapper?: boolean
+  isLoading?: boolean
 }>()
 
 function buttonClick() {

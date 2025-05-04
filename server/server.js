@@ -118,6 +118,7 @@ import {
   fetchAll,
   fetchFirst,
   fetchTableHeaders,
+  fetchTableHeadersWithPragma,
 } from './utils.js'
 const app = express()
 const workbook = new ExcelJS.Workbook()
@@ -275,7 +276,7 @@ app.post('/exceldatabase/headers', async (req, res) => {
   if (!req?.body?.tableName) {
     res.send('no table name')
   } else {
-    fetchTableHeaders(exceldatabse, req?.body?.tableName)
+    fetchTableHeadersWithPragma(exceldatabse, req?.body?.tableName, true)
       .then((data) => {
         console.log('fetchTableHeaders data', data)
         res.send(data)

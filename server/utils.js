@@ -57,7 +57,6 @@ export async function importExcelToSQLite(excelFilePath, dbFilePath, tableName) 
   })
 }
 
-
 export const all = async (db, sql) => {
   return new Promise((resolve, reject) => {
     db.all(sql, (err, res) => {
@@ -125,6 +124,24 @@ export const fetchTableHeaders = async (db, tableName) => {
     db.get(`SELECT * FROM ${tableName} LIMIT 1`, (err, res) => {
       if (err) reject(err)
       resolve(res)
+    })
+  })
+}
+
+export const fetchTableHeadersWithPragma = async (db, tableName, withConfig = false) => {
+  return new Promise((resolve, reject) => {
+    db.all(`PRAGMA table_info(${tableName})`, (err, rows) => {
+      if (err) reject(err)
+      const columnNames = withConfig
+        ? rows.map((row) => ({
+            name: row.name,
+            type: row.type, // Тип данных (например, 'INTEGER', 'TEXT')
+            notNull: row.notnull === 1, // true, если NOT NULL
+            defaultValue: row.dflt_value, // Значение по умолчанию
+            isPrimaryKey: row.pk === 1, // true, если PRIMARY KEY
+          }))
+        : rows.map((row) => row.name)
+      resolve(columnNames)
     })
   })
 }

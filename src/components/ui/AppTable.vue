@@ -29,7 +29,7 @@
               }}</slot>
             </div>
           </template>
-          <slot :name="`cell(buttons)`" :cell="{ row, rowIndex }" ref="buttonsElement"></slot>
+          <slot :name="`cell(buttons)`" :row="{ row, rowIndex }" ref="buttonsElement"></slot>
         </div>
       </div>
     </div>

@@ -4,11 +4,13 @@ import { RouterLink, RouterView } from 'vue-router'
 import AppHeader from './components/AppHeader.vue'
 import AppMain from './components/AppMain.vue'
 import AppFooter from './components/AppFooter.vue'
+import ModalBody from '@/components/ModalBody.vue'
 </script>
 
 <template>
   <AppHeader />
   <AppMain>
+    <ModalBody></ModalBody>
     <RouterView v-slot="{ Component }">
       <template v-if="Component">
         <Transition mode="out-in">

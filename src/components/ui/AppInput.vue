@@ -51,15 +51,17 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .app-input {
-  width: 400px;
-  height: 52px;
+  // min-width: 120px;
+  // min-height: 52px;
   &__input {
-    height: 100%;
+    // height: 100%;
+    min-height: 52px;
+    min-width: 120px;
     width: 100%;
     padding-left: 20px;
     outline: none;
     border: 1px solid var(--border-color-block);
-    font-size: 15px;
+    font-size: 16px;
   }
 }
 </style>

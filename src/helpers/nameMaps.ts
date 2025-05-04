@@ -1,0 +1,52 @@
+export const tiresFields = {
+  name: 'Название',
+  season: 'Сезон',
+  manufactor: 'Производитель',
+  model: 'Модель',
+  diametr: 'Диметр',
+  width: 'Ширина',
+  profile: 'Профиль',
+  spikes: 'Шипы',
+  speed_index: 'Индекс скорости',
+  load_index: 'Индекс нагрузки',
+  price: 'Цена',
+  discount: 'Скидка',
+  type: 'Тип',
+  size_type: 'Типоразмер',
+  rating: 'Рейтинг',
+  description: 'Описание',
+  updated_at: 'Обновлено',
+  reviews: 'Отзывы',
+  image: 'Фото',
+  count: 'Количество',
+  article: 'Артикул',
+}
+
+export const fields = {
+  tiresFields: {
+    name: 'Название',
+    season: 'Сезон',
+    manufactor: 'Производитель',
+    model: 'Модель',
+    diametr: 'Диметр',
+    width: 'Ширина',
+    profile: 'Профиль',
+    spikes: 'Шипы',
+    speed_index: 'Индекс скорости',
+    load_index: 'Индекс нагрузки',
+    price: 'Цена',
+    discount: 'Скидка',
+    type: 'Тип',
+    size_type: 'Типоразмер',
+    rating: 'Рейтинг',
+    description: 'Описание',
+    updated_at: 'Обновлено',
+    reviews: 'Отзывы',
+    image: 'Фото',
+    count: 'Количество',
+    article: 'Артикул',
+  },
+}
+export const getFieldsNames = (tableName) => {
+  return fields[`${tableName}Fields`]
+}

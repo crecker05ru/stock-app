@@ -1,14 +1,14 @@
 <template>
   <div class="admin-stock">
-    <Teleport to="body">
+    <!-- <Teleport to="body">
       <ModalSlot :show="showModal" @close="showModal = false">
         <template #header>
           <h3>Пользовательский заголовок</h3>
         </template>
       </ModalSlot>
-    </Teleport>
+    </Teleport> -->
     <div class="admin-stock__filters">
-      <AppButton @click="showModal = true">Создать продукт</AppButton>
+      <AppButton @click="openModal">Создать продукт</AppButton>
       <AppButton @click="fetchTableHeaders">Запросить заголовки</AppButton>
     </div>
     <div class="admin-stock__selects">
@@ -90,6 +90,10 @@ import AppTable from '@/components/ui/AppTable.vue'
 import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
 import IconFavorite from '@/components/icons/IconFavorite.vue'
 import ModalSlot from '@/components/ModalSlot.vue'
+import CreateProduct from '@/components/modalViews/CreateProduct.vue'
+import { useModalStore } from '@/stores/modal'
+
+const modalStore = useModalStore()
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
 
@@ -224,6 +228,11 @@ const selectedOptions = ref({
   function: '',
 })
 const data = ref()
+
+function openModal() {
+  modalStore.open({ component: CreateProduct, data: { tableName: 'tires' } })
+}
+
 async function getDataFromDB() {
   // fetch('http://localhost:3000/db').then((res) => {
   //   console.log('res', res)
@@ -375,7 +384,7 @@ async function fetchTableHeaders(tableName) {
     if (response?.ok) {
       const body = await response.json()
       console.log('fetchTableHeaders body', body)
-      console.log(Object.keys(body))
+      // console.log(Object.keys(body))
     }
   } catch (e) {
     console.log(e)
