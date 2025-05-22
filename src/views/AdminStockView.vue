@@ -7,6 +7,7 @@
         </template>
       </ModalSlot>
     </Teleport> -->
+    <div><AppEditor /></div>
     <div class="admin-stock__filters">
       <AppButton @click="openModal">Создать продукт</AppButton>
       <AppButton @click="fetchTableHeaders">Запросить заголовки</AppButton>
@@ -87,6 +88,7 @@ import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppTable from '@/components/ui/AppTable.vue'
+import AppEditor from '@/components/ui/AppEditor.vue'
 import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
 import IconFavorite from '@/components/icons/IconFavorite.vue'
 import ModalSlot from '@/components/ModalSlot.vue'
