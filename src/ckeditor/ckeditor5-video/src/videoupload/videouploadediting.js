@@ -1,0 +1,297 @@
+import { Plugin } from 'ckeditor5'
+import { UpcastWriter } from 'ckeditor5'
+import { Notification } from 'ckeditor5'
+import { ClipboardPipeline } from 'ckeditor5'
+import { FileRepository } from 'ckeditor5'
+import { env } from 'ckeditor5'
+import UploadVideoCommand from './uploadvideocommand'
+import {
+  createVideoMediaTypeRegExp,
+  fetchLocalVideo,
+  getVideosFromChangeItem,
+  isHtmlIncluded,
+  isLocalVideo,
+} from './utils'
+import { getViewVideoFromWidget } from '../video/utils'
+
+const DEFAULT_VIDEO_EXTENSIONS = ['mp4', 'webm', 'ogg']
+
+export default class VideoUploadEditing extends Plugin {
+  static get requires() {
+    return [FileRepository, Notification, ClipboardPipeline]
+  }
+
+  constructor(editor) {
+    super(editor)
+
+    editor.config.define('video.upload', {
+      types: DEFAULT_VIDEO_EXTENSIONS,
+      allowMultipleFiles: true,
+    })
+  }
+
+  init() {
+    const editor = this.editor
+    const doc = editor.model.document
+    const schema = editor.model.schema
+    const conversion = editor.conversion
+    const fileRepository = editor.plugins.get(FileRepository)
+
+    const videoTypes = createVideoMediaTypeRegExp(editor.config.get('video.upload.types'))
+
+    // Setup schema to allow uploadId and uploadStatus for videos.
+    schema.extend('video', {
+      allowAttributes: ['uploadId', 'uploadStatus'],
+    })
+
+    const uploadVideoCommand = new UploadVideoCommand(editor)
+    editor.commands.add('uploadVideo', uploadVideoCommand)
+    editor.commands.add('videoUpload', uploadVideoCommand)
+
+    // Register upcast converter for uploadId.
+    conversion.for('upcast').attributeToAttribute({
+      view: {
+        name: 'video',
+        key: 'uploadId',
+      },
+      model: 'uploadId',
+    })
+
+    this.listenTo(editor.editing.view.document, 'clipboardInput', (evt, data) => {
+      // Skip if non empty HTML data is included.
+      // https://github.com/ckeditor/ckeditor5-upload/issues/68
+      if (isHtmlIncluded(data.dataTransfer)) {
+        return
+      }
+
+      const videos = Array.from(data.dataTransfer.files).filter((file) => {
+        // See https://github.com/ckeditor/ckeditor5-image/pull/254.
+        if (!file) {
+          return false
+        }
+
+        return videoTypes.test(file.type)
+      })
+
+      if (!videos.length) {
+        return
+      }
+
+      evt.stop()
+
+      editor.model.change((writer) => {
+        if (data.targetRanges) {
+          writer.setSelection(
+            data.targetRanges.map((viewRange) => editor.editing.mapper.toModelRange(viewRange)),
+          )
+        }
+
+        editor.model.enqueueChange('default', () => {
+          editor.execute('uploadVideo', { file: videos })
+        })
+      })
+    })
+
+    this.listenTo(editor.plugins.get('ClipboardPipeline'), 'inputTransformation', (evt, data) => {
+      const fetchableVideos = Array.from(editor.editing.view.createRangeIn(data.content))
+        .filter((value) => isLocalVideo(value.item) && !value.item.getAttribute('uploadProcessed'))
+        .map((value) => {
+          return { promise: fetchLocalVideo(value.item), videoElement: value.item }
+        })
+
+      if (!fetchableVideos.length) {
+        return
+      }
+
+      const writer = new UpcastWriter(editor.editing.view.document)
+
+      for (const fetchableVideo of fetchableVideos) {
+        // Set attribute marking that the video was processed already.
+        writer.setAttribute('uploadProcessed', true, fetchableVideo.videoElement)
+
+        const loader = fileRepository.createLoader(fetchableVideo.promise)
+
+        if (loader) {
+          writer.setAttribute('src', '', fetchableVideo.videoElement)
+          writer.setAttribute('uploadId', loader.id, fetchableVideo.videoElement)
+        }
+      }
+    })
+
+    // Prevents from the browser redirecting to the dropped video.
+    editor.editing.view.document.on('dragover', (evt, data) => {
+      data.preventDefault()
+    })
+
+    // Upload placeholder videos that appeared in the model.
+    doc.on('change', () => {
+      const changes = doc.differ.getChanges({ includeChangesInGraveyard: true })
+
+      for (const entry of changes) {
+        if (entry.type === 'insert' && entry.name !== '$text') {
+          const item = entry.position.nodeAfter
+          const isInGraveyard = entry.position.root.rootName === '$graveyard'
+
+          for (const video of getVideosFromChangeItem(editor, item)) {
+            // Check if the video element still has upload id.
+            const uploadId = video.getAttribute('uploadId')
+
+            if (!uploadId) {
+              continue
+            }
+
+            // Check if the video is loaded on this client.
+            const loader = fileRepository.loaders.get(uploadId)
+
+            if (!loader) {
+              continue
+            }
+
+            if (isInGraveyard) {
+              // If the video was inserted to the graveyard - abort the loading process.
+              loader.abort()
+            } else if (loader.status === 'idle') {
+              // If the video was inserted into content and has not been loaded yet, start loading it.
+              this._readAndUpload(loader, video)
+            }
+          }
+        }
+      }
+    })
+
+    this.on(
+      'uploadComplete',
+      (evt, { videoElement, data }) => {
+        const urls = data.urls ? data.urls : data
+
+        this.editor.model.change((writer) => {
+          writer.setAttribute('src', urls.default, videoElement)
+          this._parseAndSetSrcsetAttributeOnVideo(urls, videoElement, writer)
+        })
+      },
+      { priority: 'low' },
+    )
+  }
+
+  _readAndUpload(loader, videoElement) {
+    const editor = this.editor
+    const model = editor.model
+    const t = editor.locale.t
+    const fileRepository = editor.plugins.get(FileRepository)
+    const notification = editor.plugins.get(Notification)
+
+    model.enqueueChange('transparent', (writer) => {
+      writer.setAttribute('uploadStatus', 'reading', videoElement)
+    })
+
+    return loader
+      .read()
+      .then(() => {
+        const promise = loader.upload()
+
+        // Force re–paint in Safari. Without it, the video will display with a wrong size.
+        // https://github.com/ckeditor/ckeditor5/issues/1975
+        /* istanbul ignore next */
+        if (env.isSafari) {
+          const viewFigure = editor.editing.mapper.toViewElement(videoElement)
+          const viewVideo = getViewVideoFromWidget(viewFigure)
+
+          editor.editing.view.once('render', () => {
+            // Early returns just to be safe. There might be some code ran
+            // in between the outer scope and this callback.
+            if (!viewVideo.parent) {
+              return
+            }
+
+            const domFigure = editor.editing.view.domConverter.mapViewToDom(viewVideo.parent)
+
+            if (!domFigure) {
+              return
+            }
+
+            const originalDisplay = domFigure.style.display
+
+            domFigure.style.display = 'none'
+
+            // Make sure this line will never be removed during minification for having "no effect".
+            domFigure._ckHack = domFigure.offsetHeight
+
+            domFigure.style.display = originalDisplay
+          })
+        }
+
+        model.enqueueChange('transparent', (writer) => {
+          writer.setAttribute('uploadStatus', 'uploading', videoElement)
+        })
+
+        return promise
+      })
+      .then((data) => {
+        model.enqueueChange('transparent', (writer) => {
+          writer.setAttribute('uploadStatus', 'complete', videoElement)
+          this.fire('uploadComplete', { data, videoElement })
+        })
+
+        clean()
+      })
+      .catch((error) => {
+        // If status is not 'error' nor 'aborted' - throw error because it means that something else went wrong,
+        // it might be generic error and it would be real pain to find what is going on.
+        if (loader.status !== 'error' && loader.status !== 'aborted') {
+          throw error
+        }
+
+        // Might be 'aborted'.
+        if (loader.status === 'error' && error) {
+          notification.showWarning(error, {
+            title: t('Upload failed'),
+            namespace: 'upload',
+          })
+        }
+
+        clean()
+
+        // Permanently remove video from insertion batch.
+        model.enqueueChange('transparent', (writer) => {
+          writer.remove(videoElement)
+        })
+      })
+
+    function clean() {
+      model.enqueueChange('transparent', (writer) => {
+        writer.removeAttribute('uploadId', videoElement)
+        writer.removeAttribute('uploadStatus', videoElement)
+      })
+
+      fileRepository.destroyLoader(loader)
+    }
+  }
+
+  _parseAndSetSrcsetAttributeOnVideo(data, video, writer) {
+    let maxWidth = 0
+
+    const srcsetAttribute = Object.keys(data)
+      .filter((key) => {
+        const width = parseInt(key, 10)
+
+        if (!isNaN(width)) {
+          maxWidth = Math.max(maxWidth, width)
+
+          return true
+        }
+      })
+      .map((key) => `${data[key]} ${key}w`)
+      .join(', ')
+
+    if (srcsetAttribute != '') {
+      writer.setAttribute(
+        'srcset',
+        {
+          data: srcsetAttribute,
+          width: maxWidth,
+        },
+        video,
+      )
+    }
+  }
+}

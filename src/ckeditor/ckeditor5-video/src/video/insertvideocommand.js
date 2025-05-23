@@ -1,0 +1,21 @@
+// import Command from 'ckeditor'
+import { Command } from 'ckeditor5'
+import { insertVideo, isVideoAllowed } from './utils'
+
+export default class InsertVideoCommand extends Command {
+  refresh() {
+    this.isEnabled = isVideoAllowed(this.editor.model)
+  }
+
+  execute(options) {
+    const model = this.editor.model
+
+    model.change((writer) => {
+      const sources = Array.isArray(options.source) ? options.source : [options.source]
+
+      for (const src of sources) {
+        insertVideo(writer, model, { src })
+      }
+    })
+  }
+}

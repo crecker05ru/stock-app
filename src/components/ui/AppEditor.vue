@@ -8,10 +8,11 @@
         <div ref="editorElement">
           <ckeditor
             v-if="editor && config"
-            :modelValue="config.initialData"
+            v-model="config.initialData"
             :editor="editor"
             :config="config"
             @ready="onReady"
+            @input="onEditorInput"
           />
         </div>
       </div>
@@ -26,14 +27,23 @@
  * https://ckeditor.com/ckeditor-5/builder/#installation/NoJgNARCB0Bs0AYKQIwhA2sQHYCcALHiCggvgMyx4Csx2OOBFAHEQSHsRUYQchACmAO2QIwwFGCnipMgLqQSFEADMAhqojygA===
  */
 
-import { computed, ref, onMounted, useTemplateRef } from 'vue'
+import { computed, ref, onMounted, useTemplateRef, watch } from 'vue'
 import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 // import VideoUpload from '@visao/ckeditor5-video/src/videoupload'
+
+// import VideoUpload from '@/ckeditor/ckeditor5-video/src/videoupload'
+// import Video from '@/ckeditor/ckeditor5-video/src/video'
+// import VideoResize from '@/ckeditor/ckeditor5-video/src/videoresize'
+// import VideoToolbar from '@/ckeditor/ckeditor5-video/src/videotoolbar'
+// import VideoStyle from '@/ckeditor/ckeditor5-video/src/videostyle'
+// import VideoInsert from '@/ckeditor/ckeditor5-video/src/videoinsert'
+
 // import Video from '@visao/ckeditor5-video/src/video'
 // import VideoResize from '@visao/ckeditor5-video/src/videoresize'
 // import VideoToolbar from '@visao/ckeditor5-video/src/videotoolbar'
 // import VideoStyle from '@visao/ckeditor5-video/src/videostyle'
 // import VideoInsert from '@visao/ckeditor5-video/src/videoinsert'
+import LocalVideoUpload from '@/plugins/ckeditor/localVideoUpload.js'
 import {
   ClassicEditor,
   Alignment,
@@ -134,6 +144,8 @@ const isLayoutReady = ref(false)
 
 const editor = ClassicEditor
 
+const editorData = ref(``)
+
 const config = computed(() => {
   if (!isLayoutReady.value) {
     return null
@@ -147,6 +159,7 @@ const config = computed(() => {
         '|',
         'mediaEmbed',
         'videoUpload',
+        'localVideoUpload',
         'sourceEditing',
         'showBlocks',
         '|',
@@ -181,6 +194,7 @@ const config = computed(() => {
     builtinPlugins: [dropEvent],
     extraPlugins: [VideoUploadAdapterPlugin],
     plugins: [
+      LocalVideoUpload,
       Alignment,
       Autoformat,
       AutoImage,
@@ -296,6 +310,15 @@ const config = computed(() => {
           icon: 'large',
         },
       ],
+      htmlSupport: {
+        // Если используете `@ckeditor/ckeditor5-html-support`
+        allow: [
+          {
+            name: 'video',
+            attributes: ['src', 'controls'],
+          },
+        ],
+      },
 
       // You need to configure the video toolbar, too, so it shows the new style
       // buttons as well as the resize buttons.
@@ -449,10 +472,15 @@ function onReady(editor) {
   // ;[...editorMenuBar.value.children].forEach((child) => child.remove())
 
   const wordCount = editor.plugins.get('WordCount')
+  // const localVideoUpload = editor.plugins.get('LocalVideoUpload')
   editorWordCount.value.appendChild(wordCount.wordCountContainer)
 
   // editorMenuBar.value.appendChild(editor.ui.view.menuBarView.element)
   console.log('onReady(editor) editor', editor)
+  // console.log('localVideoUpload', localVideoUpload)
+  // localVideoUpload.on('videoInserted', (data) => {
+  //   console.log('Видео было вставлено через плагин:', data)
+  // })
 }
 
 // ClassicEditor.create(document.querySelector('#editor'), {
@@ -673,6 +701,28 @@ function VideoUploadAdapterPlugin(editor) {
 }
 
 // editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-//   return new MyUploadAdapter(loader)
-// }
+//   ret
+
+// ClassicEditor.create(document.querySelector('#editor'), {
+//   plugins: [LocalVideoUpload /* другие плагины */],
+//   toolbar: ['localVideoUpload' /* другие кнопки */],
+// })
+//   .then((editor) => {
+//     console.log('Editor готов!', editor)
+//   })
+//   .catch((error) => {
+//     console.error('Ошибка инициализации:', error)
+//   })
+
+function onEditorInput(e) {
+  console.log('e', e)
+  console.log('config.value.initialData', config.value?.initialData)
+}
+watch(
+  config,
+  () => {
+    console.log('config.value.initialData', config.value?.initialData)
+  },
+  { deep: true },
+)
 </script>
