@@ -43,7 +43,10 @@ import { Ckeditor } from '@ckeditor/ckeditor5-vue'
 // import VideoToolbar from '@visao/ckeditor5-video/src/videotoolbar'
 // import VideoStyle from '@visao/ckeditor5-video/src/videostyle'
 // import VideoInsert from '@visao/ckeditor5-video/src/videoinsert'
-import LocalVideoUpload from '@/plugins/ckeditor/localVideoUpload.js'
+import LocalVideoUpload, {
+  VideoUpload,
+  VideoUploadEditing,
+} from '@/plugins/ckeditor/localVideoUpload.js'
 import {
   ClassicEditor,
   Alignment,
@@ -195,6 +198,8 @@ const config = computed(() => {
     extraPlugins: [VideoUploadAdapterPlugin],
     plugins: [
       LocalVideoUpload,
+      VideoUpload,
+      VideoUploadEditing,
       Alignment,
       Autoformat,
       AutoImage,
@@ -323,6 +328,7 @@ const config = computed(() => {
       // You need to configure the video toolbar, too, so it shows the new style
       // buttons as well as the resize buttons.
       toolbar: [
+        'videoUpload',
         'videoStyle:alignLeft',
         'videoStyle:alignCenter',
         'videoStyle:alignRight',
@@ -331,6 +337,16 @@ const config = computed(() => {
         'videoResize:75',
         'videoResize:original',
       ],
+    },
+    videoUpload: {
+      uploadUrl: {
+        url: null, // Ваш эндпоинт загрузки,
+        heders: {}
+      } ,
+      toolbar: true, // Показывать кнопку в тулбаре
+    },
+    localVideoUpload: {
+      maxSize: 10
     },
     balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
     fontFamily: {
