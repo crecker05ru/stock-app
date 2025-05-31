@@ -40,7 +40,12 @@
       <h2 class="home__section-title">Популярные шины</h2>
       <p class="home__section-label">Смотреть все</p>
       <div class="home__section-list">
-        <StockItem v-for="(item, index) in stockItems" :key="index" @cartClick="onCartClick" />
+        <StockItem
+          v-for="(item, index) in stockItems"
+          :data="item"
+          :key="item?.description"
+          @cartClick="onCartClick"
+        />
       </div>
     </section>
   </div>

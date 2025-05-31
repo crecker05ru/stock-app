@@ -56,7 +56,7 @@ const emit = defineEmits<{
 
 const props = defineProps({
   modelValue: { type: Object, required: false },
-  data: { type: Object, required: true },
+  data: { type: Object, required: false },
 })
 const count = ref(0)
 const itemData = ref({

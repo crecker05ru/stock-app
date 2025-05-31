@@ -161,8 +161,8 @@ const config = computed(() => {
         'redo',
         '|',
         'mediaEmbed',
-        'videoUpload',
         'localVideoUpload',
+        'videoUpload',
         'sourceEditing',
         'showBlocks',
         '|',
@@ -341,12 +341,12 @@ const config = computed(() => {
     videoUpload: {
       uploadUrl: {
         url: null, // Ваш эндпоинт загрузки,
-        heders: {}
-      } ,
+        heders: {},
+      },
       toolbar: true, // Показывать кнопку в тулбаре
     },
     localVideoUpload: {
-      maxSize: 10
+      maxSize: 10,
     },
     balloonToolbar: ['bold', 'italic', '|', 'link', '|', 'bulletedList', 'numberedList'],
     fontFamily: {

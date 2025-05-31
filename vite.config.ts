@@ -9,6 +9,8 @@ import Inspect from 'vite-plugin-inspect'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.APP_BASE,
+  assetsInclude: ['**/'],
   plugins: [
     // vue(),
     // vueJsx(),

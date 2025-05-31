@@ -1,8 +1,4 @@
-import { Plugin } from 'ckeditor5'
-import { ButtonView } from 'ckeditor5'
-import { createElement } from 'ckeditor5'
-import { Command } from 'ckeditor5' // Добавляем импорт Command
-import { FileDialogButtonView } from 'ckeditor5'
+import { Plugin, Command, ButtonView, createElement, FileDialogButtonView } from 'ckeditor5'
 
 export default class LocalVideoUpload extends Plugin {
   // static get requires() {

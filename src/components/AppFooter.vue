@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">Footer</footer>
+  <footer class="footer">Designed by Anvar</footer>
 </template>
 <script setup lang="ts"></script>
 <style lang="scss">

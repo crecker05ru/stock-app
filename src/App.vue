@@ -1,10 +1,14 @@
 <script setup lang="ts">
+import { defineAsyncComponent } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 import AppHeader from './components/AppHeader.vue'
 import AppMain from './components/AppMain.vue'
-import AppFooter from './components/AppFooter.vue'
+// import AppFooter from '@/components/AppFooter.vue'
 import ModalBody from '@/components/ModalBody.vue'
+
+//Асинхронная загрузка компоненты внутри родителя
+const AsyncFooterComponent = defineAsyncComponent(() => import('@/components/AppFooter.vue'))
 </script>
 
 <template>
@@ -27,7 +31,7 @@ import ModalBody from '@/components/ModalBody.vue'
       </template>
     </RouterView>
   </AppMain>
-  <AppFooter />
+  <AsyncFooterComponent />
 </template>
 
 <style scoped lang="scss"></style>

@@ -1,15 +1,15 @@
-export function debounce (cb, delay = 300){
+export function debounce(cb, delay = 300) {
   let timer
-  return (...args){
+  return function (...args) {
     clearTimeout(timer)
     timer = setTimeout(() => {
-      cb.aplly(this,args)
-    }, delay);
+      cb.aplly(this, args)
+    }, delay)
   }
 }
 
 export function intervalPromise(ms: number) {
   return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
+    setTimeout(resolve, ms)
+  })
 }
