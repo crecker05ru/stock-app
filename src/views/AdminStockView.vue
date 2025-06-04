@@ -7,7 +7,10 @@
         </template>
       </ModalSlot>
     </Teleport> -->
-    <div><AppEditor /></div>
+
+    <!-- <div><AppEditor /></div> -->
+    <AppInputFile />
+    <AppButton @click="openModalImport">Импортировать БД</AppButton>
     <div class="admin-stock__filters">
       <AppButton @click="openModal">Создать продукт</AppButton>
       <AppButton @click="fetchTableHeaders">Запросить заголовки</AppButton>
@@ -80,11 +83,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { defineAsyncComponent, ref, onMounted } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import AppInput from '@/components/ui/AppInput.vue'
+import AppInputFile from '@/components/ui/AppInputFile.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppTable from '@/components/ui/AppTable.vue'
@@ -95,6 +99,9 @@ import ModalSlot from '@/components/ModalSlot.vue'
 import CreateProduct from '@/components/modalViews/CreateProduct.vue'
 import { useModalStore } from '@/stores/modal'
 
+const ImportDatabase = defineAsyncComponent(
+  () => import('@/components/modalViews/ImportDatabase.vue'),
+)
 const modalStore = useModalStore()
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
@@ -235,6 +242,9 @@ function openModal() {
   modalStore.open({ component: CreateProduct, data: { tableName: 'tires' } })
 }
 
+function openModalImport() {
+  modalStore.open({ component: ImportDatabase, data: {} })
+}
 async function getDataFromDB() {
   // fetch('http://localhost:3000/db').then((res) => {
   //   console.log('res', res)
