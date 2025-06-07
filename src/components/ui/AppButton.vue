@@ -55,6 +55,15 @@ function buttonClick() {
 <style lang="scss" scoped>
 .app-button {
   --main-button-color: var(--item-main-color);
+  --main-button-background-color: var(--background-color-button-translate);
+  &--active {
+    background-color: var(--background-color-item-hover) !important;
+    border-color: var(--background-color-item-hover) !important;
+    .app-button__button-text {
+      background-color: var(--background-color-item-hover);
+      border-color: var(--background-color-item-hover);
+    }
+  }
   &__button-wrapper {
     width: fit-content;
     border-radius: var(--border-radius-button);
@@ -62,7 +71,7 @@ function buttonClick() {
     background-color: rgb(from var(--background-color-button-translate) r g b / 0.9);
     padding-bottom: 1px;
     &--wrapper {
-      background-color: var(--background-color-button-second-translate);
+      background-color: var(--main-button-background-color);
       padding-bottom: 1px;
     }
     &--icon {

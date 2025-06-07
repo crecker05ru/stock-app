@@ -84,7 +84,7 @@ const previewFile = () => {
     align-items: center;
     justify-content: center;
     max-width: 120px;
-    padding: 12px 0px;
+    padding: 12px 8px;
     background-color: var(--item-main-color);
     // min-height: 52px;
     // min-width: 120px;

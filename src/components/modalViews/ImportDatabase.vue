@@ -1,10 +1,10 @@
 <template>
-  <div class="create-product">
-    <p class="create-product__title">Импортировать БД</p>
-    <div class="create-product__inputs">
+  <div class="import-database">
+    <p class="import-database__title">Импортировать БД</p>
+    <div class="import-database__inputs">
       <AppInputFile v-model="file" accept=".xls, .xlsx, .csv" />
     </div>
-    <AppButton class="create-product__submit" @click="submit" :isLoading="isLoading"
+    <AppButton class="import-database__submit" @click="submit" :isLoading="isLoading"
       >Импортировать</AppButton
     >
   </div>
@@ -50,7 +50,7 @@ async function submit() {
 }
 </script>
 <style lang="scss" scoped>
-.create-product {
+.import-database {
   width: 720px;
   &__inputs {
     display: flex;

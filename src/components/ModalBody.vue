@@ -50,7 +50,7 @@ function onBackgroundClick() {
   transition: opacity 0.3s ease;
   &-container {
     margin: auto;
-    height: 100%;
+    min-height: 120px;
     overflow-y: auto;
     scrollbar-width: none;
     padding: 24px;

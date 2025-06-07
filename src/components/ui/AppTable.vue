@@ -34,7 +34,7 @@
       </div>
     </div>
     <div class="app-table__footer">
-      <slot :name="'footer'"> <AppPaginator /></slot>
+      <slot :name="'footer'"> <AppPaginator :totalItems="240" :perPage="24" /></slot>
     </div>
   </div>
 </template>
@@ -141,6 +141,9 @@ onUpdated(() => {
     background-color: var(--background-color-block);
     border-bottom-left-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
+  }
+  &__footer {
+    padding: 8px;
   }
 }
 </style>
