@@ -42,10 +42,10 @@ const emit = defineEmits<{
   'update:modelValue': [value: object | undefined]
 }>()
 const props = defineProps<{
-  modelValue?: object | string
+  modelValue?: object | string | number
   label?: string
   placeholder?: string
-  options?: object
+  options?: object | []
   optionNameField?: object[keyof object]
   optionKeyField?: object[keyof object]
 }>()

@@ -1,63 +1,46 @@
 <template>
   <div class="app-paginator">
-    <AppButton
-      :class="['app-paginator__button', { 'app-paginator__button--disabled': currentPage === 1 }]"
-      @click="prevPage"
-      >Prev</AppButton
-    >
-    <!-- <div class="app-paginator__page-buttons">
+    <div class="app-paginator__pages">
       <AppButton
-        :class="[
-          'app-paginator__page-button',
-          { 'app-paginator__page-button--active app-button--active': currentPage === button },
-        ]"
-        v-for="(button, buttonIndex) in buttonsToView"
-        :key="buttonIndex"
-        @click="currentPage = button"
+        :class="['app-paginator__button', { 'app-paginator__button--disabled': currentPage === 1 }]"
+        @click="prevPage"
+        >Prev</AppButton
       >
-        <template v-if="button <= 5">
-          {{ button }}
-        </template>
-        <template
-          v-else-if="
-            totalPages >= 5 &&
-            currentPage !== button &&
-            button < buttonsToView[buttonsToView?.length - 1]
-          "
+      <div class="app-paginator__page-buttons">
+        <AppButton
+          :class="[
+            'app-paginator__page-button',
+            { 'app-paginator__page-button--active app-button--active': currentPage === button },
+          ]"
+          v-for="(button, buttonIndex) in buttonsToView"
+          :key="buttonIndex"
+          @click="currentPage = button"
         >
-          ...
-        </template>
-        <template v-else>{{ button }}</template>
-      </AppButton>
-    </div> -->
-    <div class="app-paginator__page-buttons">
+          {{ button }}
+        </AppButton>
+      </div>
       <AppButton
         :class="[
-          'app-paginator__page-button',
-          { 'app-paginator__page-button--active app-button--active': currentPage === button },
+          'app-paginator__button',
+          { 'app-paginator__button--disabled': currentPage === maxPage },
         ]"
-        v-for="(button, buttonIndex) in buttonsToView"
-        :key="buttonIndex"
-        @click="currentPage = button"
+        @click="nextPage"
+        >Next</AppButton
       >
-        {{ button }}
-      </AppButton>
     </div>
-    <AppButton
-      :class="[
-        'app-paginator__button',
-        { 'app-paginator__button--disabled': currentPage === maxPage },
-      ]"
-      @click="nextPage"
-      >Next</AppButton
-    >
+    <AppSelect
+      class="app-paginator__page-size"
+      v-model="paginatorData.pageSize"
+      :options="pageSizeOptions"
+    />
   </div>
 </template>
 <script setup lang="ts">
-import IconMinus from '../icons/IconMinus.vue'
-import IconPlus from '../icons/IconPlus.vue'
-import AppButton from './AppButton.vue'
-import { computed, onMounted, ref, watch } from 'vue'
+import IconMinus from '@/components/icons/IconMinus.vue'
+import IconPlus from '@/components/icons/IconPlus.vue'
+import AppButton from '@/components/ui/AppButton.vue'
+import AppSelect from '@/components/ui/AppSelect.vue'
+import { computed, onMounted, ref, toRef, watch } from 'vue'
 // import { $ref } from 'vue/macros'
 
 const emit = defineEmits<{
@@ -74,13 +57,25 @@ const {
   perPage: { type: Number, required: true },
 })
 
+const paginatorData = ref({
+  pageSize: perPage,
+  totalItems: toRef(() => totalItems),
+  currentPage: toRef(() => modelValue),
+})
+
+const pageSizeOptions = ref([24, 48, 78, 96])
 const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(totalItems / perPage))
 const buttons = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1))
 const buttonsToView = computed(() => {
+  const viewButtonsOffset = 3
   const viewButtons = [1]
-  const startIndex = currentPage.value > 3 ? currentPage.value - 3 : 1
-  const endIndex = totalPages.value - 1 > startIndex + 3 ? startIndex + 3 : totalPages.value - 1
+  const startIndex =
+    currentPage.value > viewButtonsOffset ? currentPage.value - viewButtonsOffset : 1
+  const endIndex =
+    totalPages.value - 1 > startIndex + viewButtonsOffset
+      ? startIndex + viewButtonsOffset
+      : totalPages.value - 1
   const startIndexLimit = startIndex > totalPages.value - 4 ? totalPages.value - 4 : startIndex
   console.log('totalPages.value', totalPages.value)
   console.log('startIndex', startIndex)
@@ -117,6 +112,12 @@ watch(currentPage, () => {
 <style lang="scss" scoped>
 .app-paginator {
   display: flex;
+  &__pages {
+    display: flex;
+  }
+  &__page-size {
+    margin-left: auto;
+  }
   &__button {
     width: 56px;
     &:first-child {
