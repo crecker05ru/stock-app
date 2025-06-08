@@ -86,3 +86,6 @@ yarn global add nodemon --prefix /usr/local
 yarn create vue - создать проект
 yarn - инициализировать проект пакеты npm
 yarn add vite vite-plugin-node -D - плагин для работы с node Vite Plugin Node
+
+Запуск фронта yarn dev
+Запуск сервера в новом терминале yarn server

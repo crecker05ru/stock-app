@@ -34,7 +34,12 @@
       </div>
     </div>
     <div class="app-table__footer">
-      <slot :name="'footer'"> <AppPaginator :totalItems="240" :perPage="24" /></slot>
+      <slot :name="'footer'">
+        <AppPaginator
+          @change="onPaginatorChange"
+          :totalItems="props.totalItems"
+          :perPage="props.perPage"
+      /></slot>
     </div>
   </div>
 </template>
@@ -48,6 +53,7 @@ import AppPaginator from './AppPaginator.vue'
 
 const emit = defineEmits<{
   'update:modelValue': [value: object]
+  change: [value: object]
 }>()
 
 const props = defineProps({
@@ -55,6 +61,8 @@ const props = defineProps({
   tableItems: { type: Object, required: true },
   tableScheme: { type: Object, required: false },
   tableHeadScheme: { type: Object, required: false },
+  totalItems: { type: Number, required: true },
+  perPage: { type: Number, required: true },
 })
 
 const tableElement = ref()
@@ -95,6 +103,9 @@ function onTableResize() {
   )
 }
 
+function onPaginatorChange(paginationData) {
+  emit('change', paginationData)
+}
 onUpdated(() => {
   nextTick(() => onTableResize())
 })

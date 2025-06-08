@@ -61,6 +61,7 @@
           class="admin-stock__table"
           :tableHeadScheme="tableHeadScheme"
           :tableItems="tableItems"
+          :totalItems="tableItems?.length || 1"
         >
           <template #head(name)> Наименование </template>
           <template #head(profile)>Размер</template>

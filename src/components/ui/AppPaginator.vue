@@ -36,8 +36,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import IconMinus from '@/components/icons/IconMinus.vue'
-import IconPlus from '@/components/icons/IconPlus.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import { computed, onMounted, ref, toRef, watch } from 'vue'
@@ -45,6 +43,7 @@ import { computed, onMounted, ref, toRef, watch } from 'vue'
 
 const emit = defineEmits<{
   'update:modelValue': [value: number]
+  change: [value: object]
 }>()
 
 const {
@@ -59,8 +58,8 @@ const {
 
 const paginatorData = ref({
   pageSize: perPage,
-  totalItems: toRef(() => totalItems),
-  currentPage: toRef(() => modelValue),
+  totalItems: totalItems,
+  currentPage: modelValue,
 })
 
 const pageSizeOptions = ref([24, 48, 78, 96])
@@ -108,6 +107,14 @@ onMounted(() => {
 watch(currentPage, () => {
   console.log('watch(currentPage', currentPage.value)
 })
+
+watch(
+  paginatorData,
+  () => {
+    emit('change', paginatorData.value)
+  },
+  { deep: true },
+)
 </script>
 <style lang="scss" scoped>
 .app-paginator {
