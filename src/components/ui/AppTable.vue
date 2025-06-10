@@ -105,6 +105,7 @@ function onTableResize() {
 
 function onPaginatorChange(paginationData) {
   emit('change', paginationData)
+  console.log('onPaginatorChange(paginationData)', paginationData)
 }
 onUpdated(() => {
   nextTick(() => onTableResize())

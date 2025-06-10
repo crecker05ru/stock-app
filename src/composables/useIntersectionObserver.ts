@@ -1,12 +1,14 @@
-import { ref, nextTick, computed } from 'vue'
+import { ref, nextTick, computed, onMounted } from 'vue'
 
 interface fetchData {
   selector: string
   path: string
+  target: HTMLElement
 }
 export function useIntersectionObserver(data: fetchData) {
   const observer = ref(null)
-  const element = ref()
+  const element = ref(data?.target)
+  const isElementIntersecting = ref(false)
   const fetchedData = ref()
   const fetchedComputedData = computed(() => fetchedData.value)
   const promise = new Promise(async (resolve, reject) => {
@@ -22,6 +24,7 @@ export function useIntersectionObserver(data: fetchData) {
       reject(e)
     }
   })
+
   const observerCallback = function (entries, observer) {
     const entry = entries[0]
     if (entry?.isIntersecting) {
@@ -34,14 +37,30 @@ export function useIntersectionObserver(data: fetchData) {
       fetchedData.value = res
 
       nextTick(() => {
-        let lastElement = null
         element.value = document.querySelector(data.selector)
         observer.value = new IntersectionObserver(observerCallback, {
           threshold: 0.5,
         })
-        lastElement = element.value
         if (element.value) observer.value.observe(element.value)
       })
     })
+  }
+
+  onMounted(() => {
+    nextTick(() => {
+      if (!element.value) {
+        element.value = document.querySelector(data.selector)
+      }
+      observer.value = new IntersectionObserver(observerCallback, {
+        threshold: 0.5,
+      })
+      if (element.value) observer.value.observe(element.value)
+    })
+  })
+
+  return {
+    observer,
+    element,
+    isElementIntersecting,
   }
 }

@@ -56,6 +56,8 @@ const {
   perPage: { type: Number, required: true },
 })
 
+const currentPage = ref(1)
+
 const paginatorData = ref({
   pageSize: perPage,
   totalItems: totalItems,
@@ -63,7 +65,6 @@ const paginatorData = ref({
 })
 
 const pageSizeOptions = ref([24, 48, 78, 96])
-const currentPage = ref(1)
 const totalPages = computed(() => Math.ceil(totalItems / perPage))
 const buttons = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1))
 const buttonsToView = computed(() => {
@@ -105,7 +106,9 @@ onMounted(() => {
 })
 
 watch(currentPage, () => {
+  paginatorData.value.currentPage = currentPage.value
   console.log('watch(currentPage', currentPage.value)
+  emit('change', paginatorData.value)
 })
 
 watch(

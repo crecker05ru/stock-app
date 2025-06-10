@@ -62,6 +62,7 @@
           :tableHeadScheme="tableHeadScheme"
           :tableItems="tableItems"
           :totalItems="tableItems?.length || 1"
+          @change="onPaginationChange"
         >
           <template #head(name)> Наименование </template>
           <template #head(profile)>Размер</template>
@@ -99,6 +100,7 @@ import IconFavorite from '@/components/icons/IconFavorite.vue'
 import ModalSlot from '@/components/ModalSlot.vue'
 import CreateProduct from '@/components/modalViews/CreateProduct.vue'
 import { useModalStore } from '@/stores/modal'
+import { useRoute, useRouter } from 'vue-router'
 
 const ImportDatabase = defineAsyncComponent(
   () => import('@/components/modalViews/ImportDatabase.vue'),
@@ -106,7 +108,8 @@ const ImportDatabase = defineAsyncComponent(
 const modalStore = useModalStore()
 const inputValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
-
+const route = useRoute()
+const router = useRouter()
 const showModal = ref(false)
 const stockItems = [
   {
@@ -284,6 +287,22 @@ async function getDataFromExceldatabse() {
   }
 }
 
+function onPaginationChange(paginationData) {
+  const url = new URL(window.location.href)
+
+  // If your expected result is "http://foo.bar/?x=1&y=2&x=42"
+  url.searchParams.set('page', paginationData.currentPage)
+
+  const params = new URLSearchParams(paginationData)
+  params.append('page', paginationData.currentPage)
+  const urlSearchParams = new URLSearchParams(window.location.search)
+  console.log('params', params)
+  console.log('route.params', route.params)
+  console.log('paginationData', paginationData)
+  console.log('JSON.stringify(params)', JSON.stringify(params))
+  console.log('url', url)
+  router.replace(url.search)
+}
 function submit() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
