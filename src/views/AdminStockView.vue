@@ -61,7 +61,7 @@
           class="admin-stock__table"
           :tableHeadScheme="tableHeadScheme"
           :tableItems="tableItems"
-          :totalItems="tableItems?.length || 1"
+          :totalItems="totalItems || 1"
           @change="onPaginationChange"
         >
           <template #head(name)> Наименование </template>
@@ -234,6 +234,7 @@ const tableItems = ref([
   },
 ])
 
+const totalItems = ref(0)
 const selectedTableOption = ref()
 const selectedOptions = ref({
   table: '',
@@ -294,14 +295,16 @@ function onPaginationChange(paginationData) {
   url.searchParams.set('page', paginationData.currentPage)
 
   const params = new URLSearchParams(paginationData)
-  params.append('page', paginationData.currentPage)
+  params.set('page', paginationData.currentPage)
   const urlSearchParams = new URLSearchParams(window.location.search)
   console.log('params', params)
   console.log('route.params', route.params)
   console.log('paginationData', paginationData)
   console.log('JSON.stringify(params)', JSON.stringify(params))
   console.log('url', url)
+  console.log('url.searchParams', url.searchParams)
   router.replace(url.search)
+  getTires(url.search)
 }
 function submit() {
   fetchs.value.push(inputValue.value)
@@ -393,12 +396,13 @@ async function getTables() {
   }
 }
 
-async function getTires() {
+async function getTires(params) {
   console.log('getTires')
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase')
+    const response = await fetch(`http://localhost:3000/exceldatabase${params ? params : ''}`)
     const body = await response.json()
-    tableItems.value = body
+    tableItems.value = body?.data
+    totalItems.value = body?.total
   } catch (e) {
     console.log(e)
   }

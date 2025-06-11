@@ -286,10 +286,18 @@ app.post('/exceldatabase/headers', async (req, res) => {
 })
 
 app.get('/exceldatabase', async (req, res) => {
-  exceldatabse.all('SELECT * FROM tires LIMIT 100', (err, row) => {
+  console.error('app.get req?.query', req?.query)
+  console.error('app.get req?.params', req?.params)
+  const limit = 24
+  const offset = req?.query?.page ? req?.query?.page * limit : 0
+  exceldatabse.all(`SELECT * FROM tires LIMIT ${limit} OFFSET ${offset}`, (err, row) => {
     console.error('err', err)
-    console.log('exceldatabase res', row)
-    res.send(row)
+
+    // console.error('app.get res', res)
+    // console.log('exceldatabase res', row)
+    exceldatabse.get('SELECT COUNT(*) AS total_count FROM tires ', (err, row2) => {
+      res.send({ data: row, total: row2?.total_count })
+    })
   })
 })
 
