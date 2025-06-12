@@ -2,9 +2,9 @@
   <div class="app-table" ref="tableElement">
     <div class="app-table__head">
       <div
-        class="app-table__head-item"
         v-for="(head, headIndex) in tableHeadScheme ? tableHeadScheme : tableItems?.[0]"
         :key="headIndex"
+        :class="[`app-table__head-item ${headIndex}`]"
       >
         <slot :name="`head(${tableHeadScheme ? head : headIndex})`">{{
           tableHeadScheme ? head : headIndex
@@ -19,7 +19,7 @@
             :key="cellIndex"
           >
             <div
-              class="app-table__cell-item"
+              :class="[`app-table__cell-item ${cellIndex}`]"
               v-if="
                 tableHeadScheme?.includes(cell) || Object.keys(tableItems?.[0])?.includes(cellIndex)
               "

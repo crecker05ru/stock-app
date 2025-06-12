@@ -16,6 +16,7 @@
 import { ref, defineProps, onMounted, watch } from 'vue'
 const $emit = defineEmits<{
   inputChange: [value: Event]
+  change: [value: string | number]
   'update:modelValue': [value: string | number]
 }>()
 
@@ -38,6 +39,7 @@ function inputChange(event: Event) {
 function onInput(event: Event) {
   const value = (event?.target as HTMLInputElement)?.value
   $emit('update:modelValue', value)
+  $emit('change', value)
 }
 // watch(
 //   () => props.modelValue,

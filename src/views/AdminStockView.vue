@@ -51,6 +51,11 @@
       <div class="admin-stock__section-interaction">
         <AppInput v-model="inputValue" />
         <AppButton label="Exec" @click="execute" />
+        <AppInput
+          placeholder="Поиск по товару"
+          v-model="inputSearchValue"
+          @change="debouncedInputSearch"
+        />
         <!-- <AppButton label="insert" @click="insert" /> -->
       </div>
       <ul>
@@ -65,10 +70,16 @@
           @change="onPaginationChange"
         >
           <template #head(name)> Наименование </template>
-          <template #head(profile)>Размер</template>
+          <template #head(profile)><div class="cell-mode_text-align_center">Размер</div></template>
           <template #head(season)>Тип</template>
           <template #head(count)>Наличие</template>
           <template #head(price)>Цена</template>
+          <template #cell(0)="{ cell }"
+            ><div class="cell-mode_overflow">{{ cell?.cell }}</div></template
+          >
+          <template #cell(1)="{ cell }"
+            ><div class="cell-mode_text-align_center">{{ cell?.cell }}</div></template
+          >
           <template #cell(buttons)>
             <div class="admin-stock__table-buttons">
               <AppButton class="admin-stock__table-button" :isWrapper="true"
@@ -101,12 +112,13 @@ import ModalSlot from '@/components/ModalSlot.vue'
 import CreateProduct from '@/components/modalViews/CreateProduct.vue'
 import { useModalStore } from '@/stores/modal'
 import { useRoute, useRouter } from 'vue-router'
-
+import { debounce } from '@/helpers/debounce.ts'
 const ImportDatabase = defineAsyncComponent(
   () => import('@/components/modalViews/ImportDatabase.vue'),
 )
 const modalStore = useModalStore()
 const inputValue = ref<string>('')
+const inputSearchValue = ref<string>('')
 const fetchs = ref<[string | number]>([])
 const route = useRoute()
 const router = useRouter()
@@ -250,6 +262,15 @@ function openModal() {
 function openModalImport() {
   modalStore.open({ component: ImportDatabase, data: {} })
 }
+
+function onInputSearchChange(value) {
+  const url = new URL(window.location.href)
+  url.searchParams.set('search', value)
+  router.replace(url.search)
+  getTires(url.search)
+}
+
+const debouncedInputSearch = debounce(onInputSearchChange, 400)
 async function getDataFromDB() {
   // fetch('http://localhost:3000/db').then((res) => {
   //   console.log('res', res)
@@ -293,6 +314,7 @@ function onPaginationChange(paginationData) {
 
   // If your expected result is "http://foo.bar/?x=1&y=2&x=42"
   url.searchParams.set('page', paginationData.currentPage)
+  url.searchParams.set('search', inputSearchValue.value)
 
   const params = new URLSearchParams(paginationData)
   params.set('page', paginationData.currentPage)
