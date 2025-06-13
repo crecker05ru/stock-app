@@ -67,6 +67,8 @@
           :tableHeadScheme="tableHeadScheme"
           :tableItems="tableItems"
           :totalItems="totalItems || 1"
+          :isClickable="true"
+          @rowClick="onRowClick"
           @change="onPaginationChange"
         >
           <template #head(name)> Наименование </template>
@@ -268,6 +270,13 @@ function onInputSearchChange(value) {
   url.searchParams.set('search', value)
   router.replace(url.search)
   getTires(url.search)
+}
+
+function onRowClick(row: object) {
+  console.log('row', row)
+  const name = row?.row?.name.replaceAll('/', '').replaceAll(' ', '')
+  console.log('name', name)
+  router.push(`/admin-product-details/${row?.row?.id}`)
 }
 
 const debouncedInputSearch = debounce(onInputSearchChange, 400)

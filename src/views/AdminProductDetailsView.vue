@@ -1,6 +1,6 @@
 <template>
   <div class="product">
-    <section class="product-details">
+    <section class="product-details" v-if="details">
       <div class="product-details__image-block">
         <img
           class="product-details__image-block-img"
@@ -9,7 +9,7 @@
       </div>
       <div class="product-details__header-block">
         <h1 class="product-details__header-block-title">
-          Шины Yokohama BluEarth*Winter V905 205 45 R17 88V Нешип
+          {{ details?.name }}
         </h1>
       </div>
       <div class="product-details__reviews-block">
@@ -23,78 +23,55 @@
       <div class="product-details__details-block">
         <p class="product-details__characteristics">Характеристики:</p>
         <p class="product-details__field-name">
-          Типоразмер: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.size
-          }}</span>
+          Типоразмер: &nbsp;<span class="product-details__field-value">{{ details?.profile }}</span>
         </p>
         <p class="product-details__field-name">
-          Ширина: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.width
-          }}</span>
+          Ширина: &nbsp;<span class="product-details__field-value">{{ details?.width }}</span>
         </p>
         <p class="product-details__field-name">
-          Высота: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.height
-          }}</span>
+          Высота: &nbsp;<span class="product-details__field-value">{{ details?.profile }}</span>
         </p>
         <p class="product-details__field-name">
-          Диаметр: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.diametr
-          }}</span>
+          Диаметр: &nbsp;<span class="product-details__field-value">{{ details?.diametr }}</span>
         </p>
         <p class="product-details__field-name">
           Производитель: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.manufacter
+            details?.manufactor
           }}</span>
         </p>
         <p class="product-details__field-name">
-          Модель: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.model
-          }}</span>
+          Модель: &nbsp;<span class="product-details__field-value">{{ details?.model }}</span>
         </p>
         <p class="product-details__field-name">
-          Сезон: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.season
-          }}</span>
+          Сезон: &nbsp;<span class="product-details__field-value">{{ details?.season }}</span>
         </p>
         <p>
-          Тип: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.type
-          }}</span>
+          Тип: &nbsp;<span class="product-details__field-value">{{ details?.type }}</span>
         </p>
         <p class="product-details__field-name">
           Индекс нагрузки: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.loadIndex
+            details?.load_index
           }}</span>
         </p>
         <p class="product-details__field-name">
           Индекс скорости: &nbsp;<span class="product-details__field-value">{{
-            details.characteristics.speedIndex
+            details?.speed_index
           }}</span>
+        </p>
+        <p class="product-details__field-name">
+          Шипы: &nbsp;<span class="product-details__field-value">{{ details?.spikes }}</span>
         </p>
       </div>
       <div class="product-details__price-block">
-        <span class="product-details__price">2 500</span>
-        <div class="product-details__switch-row">
-          <AppCheckboxSwitch v-model="buyOptions.distantMountage" :value="true" />
-          <span class="product-details__switch-text">Выездной шиномонтаж&nbsp;-&nbsp;</span>
-          <span class="product-details__switch-value">500</span>
-        </div>
-        <div class="product-details__switch-row">
-          <AppCheckboxSwitch v-model="buyOptions.fixedMountage" :value="true" />
-          <span class="product-details__switch-text">Стационарный шиномонтаж</span>
-        </div>
-        <div class="product-details__switch-row">
-          <AppCheckboxSwitch v-model="buyOptions.store" :value="true" />
-          <span class="product-details__switch-text">Хранение&nbsp;-&nbsp;</span>
-          <span class="product-details__switch-value">1500</span>
-        </div>
+        <div class="product-details__price">Цена: {{ details?.price }}</div>
+        <div class="product-details__price">Количество: {{ details?.count }}</div>
+        <div class="product-details__price">Рейтинг: {{ details?.rating }}</div>
       </div>
     </section>
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onActivated, onMounted, ref } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
@@ -108,40 +85,28 @@ const buyOptions = ref({
   distantMountage: false,
   store: false,
 })
-const details = {
-  rating: 4,
-  reviews: 4,
-  qa: 6,
-  price: 3200,
-  discount: 20,
-  characteristics: {
-    size: '205/45 R17',
-    width: 205,
-    height: 45,
-    diametr: 17,
-    manufacter: 'Yokohama',
-    model: 'BluEarth*Winter V905',
-    season: 'winter',
-    type: 'light',
-    loadIndex: 88,
-    speedIndex: 'V',
-  },
-  image: '',
-  name: 'Шины Yokohama BluEarth*Winter V905 205 45 R17 88V Нешип',
-  count: 1,
-}
+const details = ref()
 
 console.log('${route?.params?.id}', route?.params?.id)
-try {
-  const response = await fetch(
-    `http://localhost:3000/exceldatabase/product-details/${route?.params?.id}`,
-  )
-  const body = await response.json()
-  console.log('response', response)
-  console.log('body', body)
-} catch (e) {
-  console.log(e)
+
+async function fetchDetails() {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/exceldatabase/product-details/${route?.params?.id}`,
+    )
+    const body = await response.json()
+    console.log('response', response)
+    console.log('body', body)
+    details.value = body?.data
+  } catch (e) {
+    console.log(e)
+  }
 }
+onMounted(async () => {
+  if (!details.value) await fetchDetails()
+})
+
+onActivated(async () => await fetchDetails())
 </script>
 <style lang="scss" scoped>
 .details {

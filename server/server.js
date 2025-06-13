@@ -202,8 +202,8 @@ const exceldatabse = new sqlite3.Database('./server/exceldatabase.db')
 console.log({ db })
 
 // Использование
-// importExcelToSQLite('./server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch((err) =>
-//   console.error('Ошибка:', err),
+// importExcelToSQLite(sqlite3, './server/rezprice.xlsx', './server/exceldatabase.db', 'tires').catch(
+//   (err) => console.error('Ошибка:', err),
 // )
 
 const sqlInsert = `INSERT INTO products(name, price) VALUES(?, ?)`
@@ -338,13 +338,29 @@ app.get('/chinook', async (req, res) => {
   })
 })
 
-app.get('/exceldatabase/1', async (req, res) => {
-  exceldatabse.get('SELECT * FROM tires', (err, row) => {
-    console.error('err', err)
-    console.log('exceldatabase res', row)
-    res.send(row)
-  })
+app.get('/exceldatabase/product-details/:id', async (req, res) => {
+  console.log('req.params.id', req?.params?.id)
+  exceldatabse.get(
+    `SELECT * FROM tires ${req.params.id ? `WHERE id = '${req.params.id}'` : ''}`,
+    (err, row) => {
+      console.error('err', err)
+      console.log('exceldatabase res', row)
+      res.send({ data: row })
+    },
+  )
 })
+
+// app.get('/exceldatabase/product-details/:name', async (req, res) => {
+//   console.log('req.params.id', req?.params?.name)
+//   exceldatabse.get(
+//     `SELECT * FROM tires ${req.params.name ? `WHERE name LIKE '%${req.params.name}%'` : ''}`,
+//     (err, row) => {
+//       console.error('err', err)
+//       console.log('exceldatabase res', row)
+//       res.send({ data: row })
+//     },
+//   )
+// })
 
 app.post('/exceldatabase/headers', async (req, res) => {
   console.log('/exceldatabase/headers req', req.body)

@@ -11,10 +11,10 @@ export async function importExcelToSQLite(sqlite3, excelFilePath, dbFilePath, ta
   const worksheet = workbook.getWorksheet(1)
 
   // Получаем заголовки столбцов (первая строка)
-  const headers = []
+  const headers = ['id']
   console.log('worksheet', worksheet)
   worksheet.getRow(1).eachCell((cell, colNumber) => {
-    console.log('cell', cell)
+    console.log('cell.value', cell.value)
     headers.push(cell.value)
   })
 
@@ -40,6 +40,7 @@ export async function importExcelToSQLite(sqlite3, excelFilePath, dbFilePath, ta
       if (rowNumber === 1) return // Пропускаем заголовки
 
       const rowData = []
+      rowData.push(rowNumber)
       row.eachCell({ includeEmpty: true }, (cell) => {
         rowData.push(cell.value)
       })

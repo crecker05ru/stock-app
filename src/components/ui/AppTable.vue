@@ -13,7 +13,12 @@
     </div>
     <div class="app-table__body" ref="tableBodyElement">
       <div class="app-table__row">
-        <div class="app-table__row-item" v-for="(row, rowIndex) in tableItems" :key="rowIndex">
+        <div
+          :class="['app-table__row-item', { 'app-table__row-item_clickable': props?.isClickable }]"
+          v-for="(row, rowIndex) in tableItems"
+          :key="rowIndex"
+          @click.stop="rowClick({ row, rowIndex })"
+        >
           <template
             v-for="(cell, cellIndex) in tableHeadScheme ? tableHeadScheme : tableItems?.[0]"
             :key="cellIndex"
@@ -23,6 +28,7 @@
               v-if="
                 tableHeadScheme?.includes(cell) || Object.keys(tableItems?.[0])?.includes(cellIndex)
               "
+              @click="cellClick({ cell, cellIndex })"
             >
               <slot :name="`cell(${cellIndex})`" :cell="{ cell: row?.[cell], cellIndex }">{{
                 tableHeadScheme ? row?.[cell] : row?.[cellIndex]
@@ -54,6 +60,8 @@ import AppPaginator from './AppPaginator.vue'
 const emit = defineEmits<{
   'update:modelValue': [value: object]
   change: [value: object]
+  rowClick: [row: object]
+  cellClick: [cell: object]
 }>()
 
 const props = defineProps({
@@ -63,6 +71,7 @@ const props = defineProps({
   tableHeadScheme: { type: Object, required: false },
   totalItems: { type: Number, required: true },
   perPage: { type: Number, required: true },
+  isClickable: { type: Boolean, required: false },
 })
 
 const tableElement = ref()
@@ -107,6 +116,15 @@ function onPaginatorChange(paginationData) {
   emit('change', paginationData)
   console.log('onPaginatorChange(paginationData)', paginationData)
 }
+
+function rowClick(row: object) {
+  emit('rowClick', row)
+}
+
+function cellClick(cell: object) {
+  emit('cellClick', cell)
+}
+
 onUpdated(() => {
   nextTick(() => onTableResize())
 })
@@ -141,6 +159,9 @@ onUpdated(() => {
     height: 54px;
     border-bottom: var(--border-block);
     border-color: var(--border-color-block);
+    &_clickable {
+      cursor: pointer;
+    }
   }
   &__cell-item {
     // padding-left: 24px;
