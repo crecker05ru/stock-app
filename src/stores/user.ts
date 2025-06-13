@@ -6,7 +6,22 @@ export const useUserStore = defineStore('user', () => {
     name: '',
     cartItems: 0,
     favorites: 0,
+    isLogged: false,
   })
+
+  function login(pass: string) {
+    if (pass === '12345') {
+      userData.value.isLogged = true
+    }
+    return new Promise((resolve, reject) => {
+      if (pass === '12345') {
+        userData.value.isLogged = true
+        resolve(true)
+      } else {
+        reject(false)
+      }
+    })
+  }
 
   function updateCart(cart) {
     userData.value.cartItems = cart
@@ -18,5 +33,5 @@ export const useUserStore = defineStore('user', () => {
 
   async function getUserData() {}
 
-  return { userData, updateCart, updateFavorite, getUserData }
+  return { userData, login, updateCart, updateFavorite, getUserData }
 })

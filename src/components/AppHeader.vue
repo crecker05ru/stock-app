@@ -7,8 +7,11 @@
         <div class="header__top-element">Покупателям</div>
         <!-- <input placeholder="Поиск по сайту" /> -->
         <AppInput placeholder="Поиск по сайту" />
-        <button class="header__button-login"><IconLogin />Войти</button>
-        <AppButton class="header__button-auth" @click="$router.push('/admin-stock')"
+        <button class="header__button-login" @click="openAuthModal"><IconLogin />Войти</button>
+        <AppButton
+          v-if="userStore.userData?.isLogged"
+          class="header__button-auth"
+          @click="$router.push('/admin-stock')"
           ><template #label>Админка</template></AppButton
         >
       </div>
@@ -46,9 +49,15 @@ import IconShoppingCart from '@/components/icons/IconShoppingCart.vue'
 import IconFavorite from '@/components/icons/IconFavorite.vue'
 import IconSettings from '@/components/icons/IconSettings.vue'
 import IconLogin from '@/components/icons/IconLogin.vue'
-import { ref } from 'vue'
+import { ref, defineAsyncComponent } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useModalStore } from '@/stores/modal'
 
+const Authorization = defineAsyncComponent(
+  () => import('@/components/modalViews/Authorization.vue'),
+)
+
+const modalStore = useModalStore()
 const userStore = useUserStore()
 
 // const userData = ref({
@@ -58,6 +67,10 @@ const userStore = useUserStore()
 function favoriteClick() {}
 
 function settingsClick() {}
+
+function openAuthModal() {
+  modalStore.open({ component: Authorization, data: {} })
+}
 </script>
 <style lang="scss" scoped>
 .header {
