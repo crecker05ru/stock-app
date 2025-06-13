@@ -1,4 +1,5 @@
-export async function importExcelToSQLite(excelFilePath, dbFilePath, tableName) {
+import ExcelJS from 'exceljs'
+export async function importExcelToSQLite(sqlite3, excelFilePath, dbFilePath, tableName) {
   // Открываем базу данных SQLite
   const db = new sqlite3.Database(dbFilePath)
 

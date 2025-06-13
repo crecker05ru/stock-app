@@ -5,6 +5,7 @@
       { 'app-button__button-wrapper': !$slots.icon },
       { 'app-button__button-wrapper--wrapper': props?.isWrapper },
       { 'app-button__button-wrapper--icon': $slots.icon },
+      { 'app-button_disabled': props?.isDisabled },
     ]"
   >
     <button
@@ -46,6 +47,7 @@ const props = defineProps<{
   label?: string
   isWrapper?: boolean
   isLoading?: boolean
+  isDisabled?: boolean
 }>()
 
 function buttonClick() {
@@ -63,6 +65,10 @@ function buttonClick() {
       background-color: var(--background-color-item-hover);
       border-color: var(--background-color-item-hover);
     }
+  }
+  &_disabled {
+    pointer-events: none;
+    opacity: 0.6;
   }
   &__button-wrapper {
     width: fit-content;

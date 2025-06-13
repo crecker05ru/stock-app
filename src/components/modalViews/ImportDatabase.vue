@@ -4,7 +4,11 @@
     <div class="import-database__inputs">
       <AppInputFile v-model="file" accept=".xls, .xlsx, .csv" />
     </div>
-    <AppButton class="import-database__submit" @click="submit" :isLoading="isLoading"
+    <AppButton
+      class="import-database__submit"
+      @click="submit"
+      :isLoading="isLoading"
+      :isDisabled="!file"
       >Импортировать</AppButton
     >
   </div>
@@ -26,16 +30,18 @@ console.log('data', data)
 console.log('modelValue', modelValue)
 
 async function submit() {
+  if (!file.value) return
   console.log('productForm', productForm)
   try {
     const formData = new FormData()
+    console.log('file.value', file.value)
     formData.append('file', file.value)
-    const response = await fetch('http://localhost:3000/exceldatabase/headers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+    const response = await fetch('http://localhost:3000/import/db', {
       body: formData,
+      method: 'POST',
+      // headers: {
+      //   'Content-Type': 'multipart/form-data',
+      // },
     })
     console.log('response', response)
     if (response?.ok) {

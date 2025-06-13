@@ -107,6 +107,9 @@
 import sqlite3 from 'sqlite3'
 import ExcelJS from 'exceljs'
 import express from 'express'
+import multer from 'multer'
+import fs from 'fs'
+import path from 'path'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import {
@@ -120,6 +123,30 @@ import {
   fetchTableHeaders,
   fetchTableHeadersWithPragma,
 } from './utils.js'
+
+const serverPath = './server/'
+// const upload = multer({
+//   dest: './server/uploads/',
+//   filename: function (req, file, cb) {
+//     // Генерируем новое имя файла
+//     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
+//     const ext = path.extname(file.originalname) // Получаем расширение файла
+//     cb(null, file.originalname)
+//   },
+// })
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './server/uploads/')
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
+    cb(null, file.originalname)
+  },
+})
+
+// const storage = multer.memoryStorage()
+const upload = multer({ storage: storage })
 const app = express()
 const workbook = new ExcelJS.Workbook()
 const urlencodedParser = express.urlencoded({ extended: false })
@@ -213,6 +240,54 @@ db.serialize(() => {
   //   console.error('err', err)
   //   console.log('res', res)
   // })
+})
+
+app.post('/import/db', upload.single('file'), async (req, res) => {
+  console.log('req?.file', req?.file)
+  // const filePath = fs.readFile(req.file.path, (err, data) => {
+  //   if (err) {
+  //     return res.status(500).send('Error reading file')
+  //   }
+  //   return data.toString()
+  // })
+
+  const contentDisposition = req.headers['content-disposition']
+  const contentType = req.headers['content-type']
+  console.log('contentDisposition', contentDisposition)
+  console.log('contentType', contentType)
+
+  const data = {
+    chunks: req?.file?.buffer || [],
+    fileTargetPath: req.file.path,
+    fileOutputPath: serverPath,
+    dbName: req?.file?.originalname,
+  }
+  console.log('data', data)
+
+  // req.on('data', (chunk) => {
+  //   data.chunks.push(chunk)
+  // })
+
+  // req.on('end', () => {
+  //   const buffer = Buffer.concat(data.chunks)
+  //   // Save or process the buffer (which contains the file data)
+  //   console.log('buffer', buffer)
+  //   fs.writeFile('./server/uploads/uploaded-file', buffer, (err) => {
+  //     if (err) {
+  //       return res.status(500).send('Error saving file')
+  //     }
+  //     const filename = path.basename('./server/uploads/uploaded-file')
+  //     console.log('filename', filename)
+  //     res.send('File uploaded successfully')
+  //   })
+  // })
+
+  // importExcelToSQLite(sqlite3, data.fileTargetPath, data.fileOutputPath, data.dbName).catch(
+  //   (err) => {
+  //     console.error('Ошибка:', err)
+  //     // res.status(500).send('Error importing file')
+  //   },
+  // )
 })
 
 app.get('/db', async (req, res) => {
