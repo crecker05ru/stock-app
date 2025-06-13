@@ -29,12 +29,17 @@ const isLoading = ref(false)
 console.log('data', data)
 console.log('modelValue', modelValue)
 
+// function onFileChange() {
+//   file.value = null
+// }
+
 async function submit() {
+  isLoading.value = true
   if (!file.value) return
+  console.log('file.value', file.value)
   console.log('productForm', productForm)
   try {
     const formData = new FormData()
-    console.log('file.value', file.value)
     formData.append('file', file.value)
     const response = await fetch('http://localhost:3000/import/db', {
       body: formData,
@@ -52,6 +57,8 @@ async function submit() {
     }
   } catch (e) {
     console.log(e)
+  } finally {
+    isLoading.value = false
   }
 }
 </script>
@@ -69,7 +76,8 @@ async function submit() {
   }
   &__submit {
     margin-top: 24px;
-    margin-left: auto;
+    // margin-left: auto;
+    width: 100%;
   }
 }
 </style>

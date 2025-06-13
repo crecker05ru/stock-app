@@ -11,7 +11,9 @@
         @input="onInput"
       />
     </label>
-    <p v-if="props?.isError" class="app-input__input_error">{{ props?.errorMessage }}</p>
+    <p v-if="props?.isError || error" class="app-input__input_error">
+      {{ props?.errorMessage || error }}
+    </p>
   </div>
 </template>
 <script setup lang="ts">
@@ -24,6 +26,7 @@ const emit = defineEmits<{
 }>()
 
 const modelValue = defineModel()
+const error = ref('')
 const props = defineProps<{
   label?: string
   placeholder?: string
@@ -34,6 +37,7 @@ const props = defineProps<{
 }>()
 
 const selectedFile = ref<File | null>(null)
+const allowedExtensions = ref([])
 function inputChange(event: Event) {
   const value = (event?.target as HTMLInputElement)?.value
   emit('inputChange', event)
@@ -41,16 +45,36 @@ function inputChange(event: Event) {
 }
 
 function onInput(event: Event) {
+  emit('update:modelValue', null)
+  error.value = ''
   const value = (event?.target as HTMLInputElement)?.value
+  const files = (event?.target as HTMLInputElement)?.files
+  const file = files?.[0]
+  console.log('file', file)
+  const fileExtension = file.name.slice(file.name.lastIndexOf('.'))
+  console.log('fileExtension', fileExtension)
+  console.log('allowedExtensions.value', allowedExtensions.value)
+  if (props?.accept && !allowedExtensions.value.includes(fileExtension)) {
+    error.value = `Not allowed ${fileExtension} extension`
+    return
+  }
   emit('update:modelValue', value)
 }
 
 const changeFile = (e: Event) => {
+  emit('update:modelValue', null)
+  selectedFile.value = null
   emit('changeFile', e)
+  error.value = ''
   const target = e.target as EventTarget
   const files = (target as HTMLInputElement).files
   const file = files?.[0]
   selectedFile.value = file as File
+  const fileExtension = file.name.slice(file.name.lastIndexOf('.'))
+  if (props?.accept && !allowedExtensions.value.includes(fileExtension)) {
+    error.value = `Not allowed ${fileExtension} extension`
+    return
+  }
   emit('update:modelValue', selectedFile.value)
 }
 
@@ -75,6 +99,12 @@ const previewFile = () => {
     link.remove()
   }
 }
+
+onMounted(() => {
+  if (props?.accept) {
+    allowedExtensions.value = props?.accept.split(',').map((str) => str.trim())
+  }
+})
 </script>
 <style lang="scss" scoped>
 .app-input {
@@ -119,6 +149,9 @@ const previewFile = () => {
     height: 100%;
     appearance: none;
     cursor: pointer;
+    &_error {
+      color: var(--font-color-danger);
+    }
   }
 }
 </style>
