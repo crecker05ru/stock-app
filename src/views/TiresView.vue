@@ -1,18 +1,18 @@
 <template>
-  <div class="home">
-    <div class="home__filters">
-      <FilterBlock class="home__filter" v-model="tiresFiltersData" />
+  <div class="tires">
+    <div class="tires__filters">
+      <FilterBlock class="tires__filter" v-model="tiresFiltersData" />
     </div>
-    <div class="home__banners"></div>
-    <section class="home__section">
-      <h2 class="home__section-title">Популярные шины</h2>
-      <p class="home__section-label">Смотреть все</p>
-      <div class="home__section-list" v-if="tiresList?.length">
+    <div class="tires__banners"></div>
+    <section class="tires__section">
+      <h2 class="tires__section-title">Популярные шины</h2>
+      <div class="tires__section-list" v-if="tiresList?.length">
         <StockItem
+          class="tires__item"
           v-for="(item, index) in tiresList"
           :key="index"
           :data="item"
-          @click="$router.push(`tires/${index}`)"
+          @itemTextClick="$router.push(`tires/${item?.id}`)"
         />
       </div>
     </section>
@@ -93,14 +93,14 @@ const tiresFiltersData = ref({
   options: [],
 })
 
-const tiresList = ref([{ name: '', count: 0, price: 0 }])
+const tiresList = ref()
 
 async function getTires() {
   console.log('getTires')
   try {
     const response = await fetch('http://localhost:3000/exceldatabase')
     const body = await response.json()
-    tiresList.value = body
+    tiresList.value = body?.data
   } catch (e) {
     console.log(e)
   }
@@ -115,7 +115,7 @@ onMounted(() => {
 })
 </script>
 <style lang="scss" scoped>
-.home {
+.tires {
   &__categories {
     padding-top: 55px;
     padding-bottom: 20px;
@@ -190,6 +190,9 @@ onMounted(() => {
     // grid-template-columns: repeat(auto-fill, minmax(278px, 1fr));
     grid-template-columns: repeat(auto-fill, minmax(278px, 1fr));
     gap: 30px;
+  }
+  &__item {
+    // cursor: pointer;
   }
 }
 

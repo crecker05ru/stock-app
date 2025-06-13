@@ -5,7 +5,7 @@
         'app-counter__button app-counter__button--minus',
         { 'app-counter__button--disabled': counter === 0 },
       ]"
-      @click="decreaseCount"
+      @click.stop="decreaseCount"
     >
       <IconMinus />
     </button>
@@ -17,7 +17,7 @@
         'app-counter__button app-counter__button--plus',
         { 'app-counter__button--disabled': counter >= maxCount },
       ]"
-      @click="addCount"
+      @click.stop="addCount"
     >
       <IconPlus />
     </button>

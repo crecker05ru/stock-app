@@ -87,7 +87,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, onActivated } from 'vue'
 import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
@@ -95,7 +95,9 @@ import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import AppCheckboxSwitch from '@/components/ui/AppCheckboxSwitch.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppCounter from '@/components/ui/AppCounter.vue'
+import { useRoute } from 'vue-router'
 
+const route = useRoute()
 const buyOptions = ref({
   fixedMountage: false,
   distantMountage: false,
@@ -136,9 +138,29 @@ async function getTire() {
   }
 }
 
-onMounted(() => {
-  getTire()
-})
+// onMounted(() => {
+//   getTire()
+// })
+
+async function fetchDetails() {
+  try {
+    const response = await fetch(
+      `http://localhost:3000/exceldatabase/product-details/${route?.params?.id}`,
+    )
+    const body = await response.json()
+    console.log('response', response)
+    console.log('body', body)
+    tireDetails.value = body?.data
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+// onMounted(async () => {
+//   if (!tireDetails.value) await fetchDetails()
+// })
+
+onActivated(async () => await fetchDetails())
 </script>
 <style lang="scss" scoped>
 .details {

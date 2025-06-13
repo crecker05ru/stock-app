@@ -5,7 +5,7 @@
     </div>
     <div class="home__banners"></div>
     <div class="home__categories">
-      <div class="home__category-item">
+      <div class="home__category-item" @click="router.push('/tires')">
         <img class="home__category-item-image" src="@/assets/images/main/category_tires.png" />
         <span class="home__category-item-title">Шины </span>
         <IconArrowRight class="home__category-item-icon" />
@@ -38,7 +38,7 @@
     </div>
     <section class="home__section">
       <h2 class="home__section-title">Популярные шины</h2>
-      <p class="home__section-label">Смотреть все</p>
+      <p class="home__section-label" @click="router.push('/tires')">Смотреть все</p>
       <div class="home__section-list">
         <StockItem
           v-for="(item, index) in stockItems"
@@ -57,7 +57,9 @@ import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const userStore = useUserStore()
 const stockItems = [
   {

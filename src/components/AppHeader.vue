@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <div class="header__wrapper">
-      <div class="header__top">
+      <div class="header__top header_wrap">
         <div class="header__top-select">Санкт-Петербург</div>
         <div class="header__top-element">Отзывы</div>
         <div class="header__top-element">Покупателям</div>
@@ -12,7 +12,7 @@
           ><template #label>Админка</template></AppButton
         >
       </div>
-      <div class="header__center">
+      <div class="header__center header_wrap">
         <div class="header__center-buttons">
           <IconFavorite class="header__center-button--favorite" />
           <IconSettings class="header__center-button--settings" />
@@ -63,10 +63,21 @@ function settingsClick() {}
 .header {
   // height: 60px;
   // border: 2px solid #000;
+  &_wrap {
+    max-width: calc(100% - 48px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+  &__wrapper {
+    // padding-left: 24px;
+    // padding-right: 24px;
+  }
   &__top {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(50px, auto));
     align-items: center;
+    // padding-left: 24px;
+    // padding-right: 24px;
   }
   &__nav {
     background-color: var(--background-color-header);
@@ -92,6 +103,9 @@ function settingsClick() {}
     display: flex;
     align-items: center;
     gap: 20px;
+    padding-bottom: 24px;
+    // padding-left: 24px;
+    // padding-right: 24px;
   }
   &__center-buttons {
     display: flex;

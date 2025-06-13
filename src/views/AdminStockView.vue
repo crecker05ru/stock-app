@@ -51,13 +51,14 @@
       <div class="admin-stock__section-interaction">
         <AppInput v-model="inputValue" />
         <AppButton label="Exec" @click="execute" />
-        <AppInput
-          placeholder="Поиск по товару"
-          v-model="inputSearchValue"
-          @change="debouncedInputSearch"
-        />
         <!-- <AppButton label="insert" @click="insert" /> -->
       </div>
+      <AppInput
+        class="admin-stock__search-input"
+        placeholder="Поиск по товару"
+        v-model="inputSearchValue"
+        @change="debouncedInputSearch"
+      />
       <ul>
         <li v-for="(fetch, index) in fetchs" :key="index">{{ fetch }}</li>
       </ul>
@@ -495,6 +496,11 @@ onMounted(() => {
     display: flex;
     gap: 16px;
     align-items: center;
+  }
+  &__search-input {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    max-width: 50%;
   }
   &__table-buttons {
     display: flex;

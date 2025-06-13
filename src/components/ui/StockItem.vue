@@ -32,10 +32,10 @@
     <div class="stock-item__prices" v-else>
       <span class="stock-item__price">{{ itemData?.price }}</span>
     </div>
-    <div class="stock-item__description">{{ itemData?.name }}</div>
+    <div class="stock-item__description" @click.stop="itemTextClick">{{ itemData?.name }}</div>
     <div class="stock-item__footer">
       <div class="stock-item__footer-count"><AppCounter v-model="count" /></div>
-      <AppButton label="В корзину" @click="cartClick" />
+      <AppButton label="В корзину" @click.stop="cartClick" />
     </div>
   </div>
 </template>
@@ -52,6 +52,7 @@ import { onMounted, ref } from 'vue'
 const emit = defineEmits<{
   'update:modelValue': [value: number]
   cartClick: [count: number]
+  itemTextClick: [value: void]
 }>()
 
 const props = defineProps({
@@ -76,6 +77,9 @@ function cartClick() {
   emit('cartClick', count.value)
 }
 
+function itemTextClick() {
+  emit('itemTextClick')
+}
 function favoriteClick() {}
 
 function settingsClick() {}
@@ -149,6 +153,9 @@ onMounted(() => {
     position: absolute;
     left: -6px;
     top: 10px;
+  }
+  &__description {
+    cursor: pointer;
   }
   &__footer {
     display: flex;
