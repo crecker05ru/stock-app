@@ -134,7 +134,7 @@ const details = {
 console.log('${route?.params?.id}', route?.params?.id)
 try {
   const response = await fetch(
-    `http://localhost:3000/exceldatabase/product-details/${route?.params?.id}`,
+    `http://localhost:5180/exceldatabase/product-details/${route?.params?.id}`,
   )
   const body = await response.json()
   console.log('response', response)

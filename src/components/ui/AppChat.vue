@@ -50,7 +50,7 @@ const isChatOpened = ref(false)
 const socket = ref()
 const popUpElement = ref()
 const onEnterElement = ref()
-const baseWS = 'localhost:3000'
+const baseWS = 'localhost:5180'
 // const enterAudio = new Audio("/assets/sounds/on-enter-sound.wav");
 // const popAudio = new Audio("/assets/sounds/pop-sound.wav");
 

@@ -41,7 +41,7 @@ async function submit() {
   try {
     const formData = new FormData()
     formData.append('file', file.value)
-    const response = await fetch('http://localhost:3000/import/db', {
+    const response = await fetch('http://localhost:5180/import/db', {
       body: formData,
       method: 'POST',
       // headers: {

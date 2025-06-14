@@ -130,7 +130,7 @@ function cartClick() {}
 async function getTire() {
   console.log('getTires')
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase/1')
+    const response = await fetch('http://localhost:5180/exceldatabase/1')
     const body = await response.json()
     tireDetails.value = body
   } catch (e) {
@@ -145,7 +145,7 @@ async function getTire() {
 async function fetchDetails() {
   try {
     const response = await fetch(
-      `http://localhost:3000/exceldatabase/product-details/${route?.params?.id}`,
+      `http://localhost:5180/exceldatabase/product-details/${route?.params?.id}`,
     )
     const body = await response.json()
     console.log('response', response)

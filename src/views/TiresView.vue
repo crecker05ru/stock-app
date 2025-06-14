@@ -98,7 +98,7 @@ const tiresList = ref()
 async function getTires() {
   console.log('getTires')
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase')
+    const response = await fetch('http://localhost:5180/exceldatabase')
     const body = await response.json()
     tiresList.value = body?.data
   } catch (e) {

@@ -34,7 +34,7 @@ console.log('data', data)
 console.log('modelValue', modelValue)
 async function fetchTableHeaders(tableName: string) {
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase/headers', {
+    const response = await fetch('http://localhost:5180/exceldatabase/headers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

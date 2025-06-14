@@ -282,12 +282,12 @@ function onRowClick(row: object) {
 
 const debouncedInputSearch = debounce(onInputSearchChange, 400)
 async function getDataFromDB() {
-  // fetch('http://localhost:3000/db').then((res) => {
+  // fetch('http://localhost:5180/db').then((res) => {
   //   console.log('res', res)
   //   data.value = res
   // })
   try {
-    const response = await fetch('http://localhost:3000/db')
+    const response = await fetch('http://localhost:5180/db')
     const body = await response.json()
     data.value = body
   } catch (e) {
@@ -296,12 +296,12 @@ async function getDataFromDB() {
 }
 
 async function getDataFromChinook() {
-  // fetch('http://localhost:3000/db').then((res) => {
+  // fetch('http://localhost:5180/db').then((res) => {
   //   console.log('res', res)
   //   data.value = res
   // })
   try {
-    const response = await fetch('http://localhost:3000/chinook')
+    const response = await fetch('http://localhost:5180/chinook')
     const body = await response.json()
     data.value = body
   } catch (e) {
@@ -311,7 +311,7 @@ async function getDataFromChinook() {
 
 async function getDataFromExceldatabse() {
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase')
+    const response = await fetch('http://localhost:5180/exceldatabase')
     const body = await response.json()
     data.value = body
   } catch (e) {
@@ -340,9 +340,9 @@ function onPaginationChange(paginationData) {
 }
 function submit() {
   fetchs.value.push(inputValue.value)
-  // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
+  // fetch('http://localhost:5180/db').then((res) => console.log('res', res))
 
-  // fetch('http://localhost:3000/db/run', {
+  // fetch('http://localhost:5180/db/run', {
   //   method: 'POST',
   //   headers: {
   //     'Content-Type': 'application/json',
@@ -359,12 +359,12 @@ function submit() {
   console.log('sqlString', sqlString)
 
   if (selectedOptions.value.operation === 'GET') {
-    fetch('http://localhost:3000/chinook').then((res) => {
+    fetch('http://localhost:5180/chinook').then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
   } else {
-    fetch('http://localhost:3000/chinook/execute', {
+    fetch('http://localhost:5180/chinook/execute', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -379,9 +379,9 @@ function submit() {
 
 function execute() {
   fetchs.value.push(inputValue.value)
-  // fetch('http://localhost:3000/db').then((res) => console.log('res', res))
+  // fetch('http://localhost:5180/db').then((res) => console.log('res', res))
 
-  fetch('http://localhost:3000/chinook/execute', {
+  fetch('http://localhost:5180/chinook/execute', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -396,7 +396,7 @@ function execute() {
 
 function insert() {
   fetchs.value.push(inputValue.value)
-  fetch('http://localhost:3000/chinook/insert', {
+  fetch('http://localhost:5180/chinook/insert', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -410,7 +410,7 @@ function insert() {
 }
 
 async function getTables() {
-  // fetch('http://localhost:3000/tables', {
+  // fetch('http://localhost:5180/tables', {
   //   headers: {
   //     'Content-Type': 'application/json',
   //   },
@@ -420,7 +420,7 @@ async function getTables() {
   //   inputValue.value = ''
   // })
   try {
-    const response = await fetch('http://localhost:3000/tables')
+    const response = await fetch('http://localhost:5180/tables')
     const body = await response.json()
     data.value = body
   } catch (e) {
@@ -431,7 +431,7 @@ async function getTables() {
 async function getTires(params) {
   console.log('getTires')
   try {
-    const response = await fetch(`http://localhost:3000/exceldatabase${params ? params : ''}`)
+    const response = await fetch(`http://localhost:5180/exceldatabase${params ? params : ''}`)
     const body = await response.json()
     tableItems.value = body?.data
     totalItems.value = body?.total
@@ -441,7 +441,7 @@ async function getTires(params) {
 }
 async function fetchTableHeaders(tableName) {
   try {
-    const response = await fetch('http://localhost:3000/exceldatabase/headers', {
+    const response = await fetch('http://localhost:5180/exceldatabase/headers', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

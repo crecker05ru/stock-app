@@ -193,7 +193,8 @@ if (import.meta?.env?.PROD) {
   console.log('listening on http://localhost:3000/')
 }
 
-app.listen(3000)
+app.listen(process.env.PORT || 5180)
+console.log('listening on ', process.env.PORT)
 export const viteNodeServer = app
 const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)
