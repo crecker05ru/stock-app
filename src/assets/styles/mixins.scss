@@ -1,0 +1,44 @@
+@use 'sass:math';
+
+$desktop: 1920px;
+$notebook: 1440px;
+$notebookS: 1280px;
+$mainbreak: 1024px;
+$tablet: 768px;
+$mobile: 375px;
+
+@mixin desktop {
+  @media only screen and (max-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin notebook {
+  @media only screen and (max-width: $notebook) {
+    @content;
+  }
+}
+
+@mixin notebookS {
+  @media only screen and (max-width: $notebookS) {
+    @content;
+  }
+}
+
+@mixin mainbreak {
+  @media only screen and (max-width: $mainbreak) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media only screen and (max-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin mobile {
+  @media only screen and (max-width: $mobile) {
+    @content;
+  }
+}

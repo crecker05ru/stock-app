@@ -7,7 +7,7 @@
       @click.self="onBackgroundClick"
     >
       <div class="modal-container">
-        <component :is="modal?.component" v-model="modal.data" @close="close"></component>
+        <component :is="importedComponent" v-model="modal.data" @close="close"></component>
       </div>
     </div>
   </Transition>
@@ -15,6 +15,7 @@
 <script lang="ts" setup>
 import { storeToRefs } from 'pinia'
 import { useModalStore } from '@/stores/modal.ts'
+import { computed, defineAsyncComponent } from 'vue'
 
 const emit = defineEmits<{
   close: [value: void]
@@ -25,6 +26,27 @@ const modalStore = useModalStore()
 
 const { modal } = storeToRefs(modalStore)
 
+const importedComponent = computed(() => {
+  return modal.value?.componentName
+    ? defineAsyncComponent(() =>
+        import(`@/components/modalViews/${modal.value?.componentName}.vue`)
+          .then((data) => {
+            return data
+          })
+          .catch((e) => console.log('e', e)),
+      )
+    : modal.value?.component
+})
+
+function importComponent(componentName: string) {
+   return defineAsyncComponent(() =>
+    import(`@/components/modalViews/${componentName}.vue`)
+      .then((data) => {
+        return data
+      })
+      .catch((e) => console.log('e', e)),
+  )
+}
 function close() {
   emit('close')
   modalStore.close()

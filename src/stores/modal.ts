@@ -4,6 +4,7 @@ import { ref, markRaw } from 'vue'
 export type Modal = {
   isOpened: boolean
   component?: object | null
+  componentName?: string | null
   data?: object | null
   events?: ModalEvents[]
   props: object
@@ -23,12 +24,12 @@ export const useModalStore = defineStore('modal', () => {
     props: {},
   })
 
-  function open({ component, data, events, props }: Modal) {
+  function open({ component = null, componentName, data, events, props }: Modal) {
     modal.value = {
       ...modal.value,
       isOpened: true,
-      component: markRaw(component),
-      // component,
+      component: component ? markRaw(component) : component,
+      componentName,
       data,
       events,
       props,
@@ -40,6 +41,7 @@ export const useModalStore = defineStore('modal', () => {
       ...modal.value,
       isOpened: false,
       component: null,
+      componentName: null,
       data: {},
       events: [],
       props: {},

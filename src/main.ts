@@ -1,4 +1,4 @@
-import './assets/main.css'
+import './assets/styles/main.css'
 
 import { createApp, defineAsyncComponent, hydrateOnIdle } from 'vue'
 import { createPinia } from 'pinia'

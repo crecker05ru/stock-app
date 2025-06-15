@@ -53,9 +53,9 @@ import { ref, defineAsyncComponent } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useModalStore } from '@/stores/modal'
 
-const Authorization = defineAsyncComponent(
-  () => import('@/components/modalViews/Authorization.vue'),
-)
+// const Authorization = defineAsyncComponent(
+//   () => import('@/components/modalViews/Authorization.vue'),
+// )
 
 const modalStore = useModalStore()
 const userStore = useUserStore()
@@ -69,7 +69,7 @@ function favoriteClick() {}
 function settingsClick() {}
 
 function openAuthModal() {
-  modalStore.open({ component: Authorization, data: {} })
+  modalStore.open({ componentName: 'Authorization', data: {} })
 }
 </script>
 <style lang="scss" scoped>

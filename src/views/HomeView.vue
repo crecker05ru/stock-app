@@ -141,10 +141,11 @@ function onCartClick(count: number) {
     padding-bottom: 20px;
     display: grid;
     gap: 20px;
-    grid-template: repeat(2, 132px) / minmax(40%, 1fr) minmax(29%, 1fr) minmax(29%, 1fr);
+    grid-template: repeat(2, 132px) / minmax(36%, 1fr) minmax(29%, 1fr) minmax(29%, 1fr);
   }
   &__category-item {
     display: flex;
+    position: relative;
     // width: 100%;
     // justify-content: center;
     align-items: center;
@@ -175,10 +176,17 @@ function onCartClick(count: number) {
       margin-bottom: 40px;
     }
     &_truck {
+      display: block;
       margin-top: auto;
       margin-bottom: 18px;
-      position: relative;
-      right: -24px;
+      position: absolute;
+      right: 0;
+      // transform: translate(0, 50%);
+      top: calc(307px / 3);
+      @include notebookS {
+        max-width: 100%;
+        object-fit: cover;
+      }
     }
   }
   &__category-item-title {
