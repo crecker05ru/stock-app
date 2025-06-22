@@ -136,12 +136,21 @@ function onCartClick(count: number) {
 </script>
 <style lang="scss" scoped>
 .home {
+  &__filters {
+    max-width: 100%;
+  }
   &__categories {
     padding-top: 55px;
     padding-bottom: 20px;
     display: grid;
     gap: 20px;
     grid-template: repeat(2, 132px) / minmax(36%, 1fr) minmax(29%, 1fr) minmax(29%, 1fr);
+    @include notebookS {
+      grid-template: repeat(2, 120px) / minmax(280px, 1fr) minmax(160px, 1fr) minmax(160px, 1fr);
+    }
+    @include tablet {
+      grid-template: repeat(4, 100px) / minmax(180px, 1fr);
+    }
   }
   &__category-item {
     display: flex;
@@ -152,6 +161,11 @@ function onCartClick(count: number) {
     background-color: var(--item-main-color);
     border-radius: var(--border-radius-button);
     cursor: pointer;
+
+    @include tablet {
+      padding: 0px;
+    }
+
     &_double {
       flex-direction: column;
     }
@@ -161,11 +175,23 @@ function onCartClick(count: number) {
     display: block;
     align-items: center;
     // flex-direction: column;
+
+    @include tablet {
+      margin-top: 0;
+    }
   }
   &__category-item-image {
     position: relative;
     top: -24px;
     margin-left: 20px;
+
+    @include tablet {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin-left: 0;
+    }
+
     &_rims {
       position: relative;
       top: -16px;
@@ -174,6 +200,13 @@ function onCartClick(count: number) {
     &_double {
       margin-top: auto;
       margin-bottom: 40px;
+
+      @include notebookS {
+        max-width: 80%;
+        min-width: 100px;
+        height: auto;
+        object-fit: cover;
+      }
     }
     &_truck {
       display: block;
@@ -187,6 +220,13 @@ function onCartClick(count: number) {
         max-width: 100%;
         object-fit: cover;
       }
+      @include tablet {
+        position: relative;
+        max-width: 50%;
+        top: -60px;
+        overflow: hidden;
+        margin-left: auto;
+      }
     }
   }
   &__category-item-title {
@@ -196,10 +236,18 @@ function onCartClick(count: number) {
     font-size: 26px;
     font-weight: 500;
     line-height: 30px;
+
+    @include notebookS {
+      font-size: 18px;
+    }
     &_double {
       font-size: 26px;
       font-weight: 500;
       line-height: 30px;
+
+      @include notebookS {
+        font-size: 16px;
+      }
     }
   }
   &__category-item-icon {
@@ -209,6 +257,13 @@ function onCartClick(count: number) {
     &_double {
       position: relative;
       bottom: -10px;
+
+      @include tablet {
+        display: none;
+        // margin-right: 0px;
+        // width: 24px;
+        // height: 24px;
+      }
     }
   }
   &__section-list {
@@ -224,5 +279,10 @@ function onCartClick(count: number) {
 .category-item--height_double {
   grid-row: span 2;
   flex-direction: column;
+
+  @include tablet {
+    grid-row: span 1;
+    flex-direction: row;
+  }
 }
 </style>

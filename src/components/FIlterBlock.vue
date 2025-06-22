@@ -119,6 +119,10 @@ onMounted(() => {
     grid-template: auto auto / repeat(3, auto);
     gap: 10px;
     margin-bottom: 18px;
+
+    @include tablet {
+      grid-template: auto / auto;
+    }
   }
   &__selector {
     width: 172px;
@@ -128,12 +132,20 @@ onMounted(() => {
     border-color: var(--border-color-block);
     border-radius: var(--border-radius-button);
     color: var(--color-text-button);
+
+    @include tablet {
+      width: 100%;
+    }
   }
   &__checkboxes {
     display: grid;
     grid-template: auto / repeat(3, 1fr);
     margin-bottom: 40px;
     gap: 10px;
+
+    @include tablet {
+      grid-template: auto / auto;
+    }
   }
   &__checkbox {
     color: var(--color-text-button);

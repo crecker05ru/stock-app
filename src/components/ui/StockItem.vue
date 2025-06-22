@@ -116,6 +116,13 @@ onMounted(() => {
     margin-right: auto;
     width: 123px;
     height: 155px;
+
+    @include tablet {
+      // width: auto;
+      // height: auto;
+      // max-width: 100%;
+      // max-height: 100%;
+    }
   }
   &__image {
     display: block;

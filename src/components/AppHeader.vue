@@ -94,6 +94,10 @@ function openAuthModal() {
   }
   &__nav {
     background-color: var(--background-color-header);
+
+    @include tablet {
+      display: none;
+    }
   }
   &__nav-wrapper {
     display: grid;

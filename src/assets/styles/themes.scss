@@ -39,6 +39,17 @@
   --twinkle-duration: 4s;
 }
 
+@media screen and (max-width: 1440px) {
+  :root {
+    --page--side-padding: 2rem;
+  }
+}
+@media screen and (max-width: 960px) {
+  :root {
+    --page--side-padding: 1rem;
+  }
+}
+
 .light-theme {
   --color-text-main: #333333;
   --color-text-header: #ffffff;

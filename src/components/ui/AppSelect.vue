@@ -73,7 +73,7 @@ console.log('props', props)
 .app-select {
   position: relative;
   height: 48px;
-  min-width: 172px;
+  min-width: 120px;
   // max-width: 100%;
   border: 1px solid var(--border-color-block);
   border-radius: var(--border-radius-button);
