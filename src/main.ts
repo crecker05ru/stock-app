@@ -7,9 +7,9 @@ import App from './App.vue'
 import router from './router'
 
 const worker = new Worker('./webWorker.js')
-const sharedWorker = new SharedWorker('./sharedWorker.js')
-const serviceWorker = new SharedWorker('./serviceWorker.js')
-// worker.postMessage({ message: 'connect webworker' })
+// const sharedWorker = new SharedWorker('./sharedWorker.js')
+// const serviceWorker = import('./serviceWorker.js')
+worker.postMessage({ message: 'connect webworker' })
 // sharedWorker.port.postMessage('connect shared worker')
 const app = createApp(App)
 app.use(createPinia())

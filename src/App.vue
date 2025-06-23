@@ -9,6 +9,27 @@ import ModalBody from '@/components/ModalBody.vue'
 
 //Асинхронная загрузка компоненты внутри родителя
 const AsyncFooterComponent = defineAsyncComponent(() => import('@/components/AppFooter.vue'))
+
+const registerServiceWorker = async () => {
+  if ('serviceWorker' in navigator) {
+    try {
+      const registration = await navigator.serviceWorker.register('./serviceWorker.j', {
+        scope: '/',
+      })
+      if (registration.installing) {
+        console.log('Service worker installing')
+      } else if (registration.waiting) {
+        console.log('Service worker installed')
+      } else if (registration.active) {
+        console.log('Service worker active')
+      }
+    } catch (error) {
+      console.error(`Registration failed with ${error}`)
+    }
+  }
+}
+
+registerServiceWorker()
 </script>
 
 <template>
