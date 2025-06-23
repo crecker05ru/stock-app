@@ -9,9 +9,9 @@ import router from './router'
 const worker = new Worker('./webWorker.js')
 const sharedWorker = new SharedWorker('./sharedWorker.js')
 const serviceWorker = new SharedWorker('./serviceWorker.js')
+// worker.postMessage({ message: 'connect webworker' })
+// sharedWorker.port.postMessage('connect shared worker')
 const app = createApp(App)
-worker.postMessage({ message: 'connect webworker' })
-sharedWorker.port.postMessage('connect shared worker')
 app.use(createPinia())
 app.use(router)
 

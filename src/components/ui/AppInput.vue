@@ -58,7 +58,7 @@ onMounted(() => {
   &__input {
     // height: 100%;
     min-height: 52px;
-    min-width: 120px;
+    min-width: 160px;
     width: 100%;
     padding-left: 20px;
     outline: none;

@@ -91,6 +91,12 @@ function openAuthModal() {
     align-items: center;
     // padding-left: 24px;
     // padding-right: 24px;
+    @include tablet {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
   }
   &__nav {
     background-color: var(--background-color-header);

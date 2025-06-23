@@ -43,7 +43,7 @@ function submit() {
 </script>
 <style lang="scss" scoped>
 .authorization {
-  width: 720px;
+  // width: 720px;
   &__inputs {
     display: flex;
     flex-wrap: wrap;

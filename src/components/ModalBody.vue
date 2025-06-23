@@ -39,7 +39,7 @@ const importedComponent = computed(() => {
 })
 
 function importComponent(componentName: string) {
-   return defineAsyncComponent(() =>
+  return defineAsyncComponent(() =>
     import(`@/components/modalViews/${componentName}.vue`)
       .then((data) => {
         return data
@@ -70,12 +70,17 @@ function onBackgroundClick() {
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   transition: opacity 0.3s ease;
+
+  // @include mobile {
+  //   padding: 0;
+  // }
+
   &-container {
     margin: auto;
     min-height: 120px;
     overflow-y: auto;
     scrollbar-width: none;
-    padding: 24px;
+    padding: var(--page--side-padding);
     background-color: #fff;
     border-radius: var(--border-radius);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
