@@ -20,6 +20,7 @@ import { ref } from 'vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import { getFieldsNames } from '@/helpers/nameMaps'
+import api from '@/api'
 
 const { data, modelValue } = defineProps<{
   data?: object
@@ -34,20 +35,9 @@ console.log('data', data)
 console.log('modelValue', modelValue)
 async function fetchTableHeaders(tableName: string) {
   try {
-    const response = await fetch('http://localhost:5180/exceldatabase/headers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ tableName }),
-    })
-    console.log('response', response)
-    if (response?.ok) {
-      const body = await response.json()
-      headers.value = body
-      console.log('fetchTableHeaders body', body)
-      // console.log(Object.keys(body))
-    }
+    const body = await api.post('/exceldatabase/headers', JSON.stringify({ tableName }))
+    headers.value = body
+    console.log('fetchTableHeaders body', body)
   } catch (e) {
     console.log(e)
   }

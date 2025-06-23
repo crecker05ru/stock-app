@@ -195,6 +195,8 @@ if (import.meta?.env?.PROD) {
 
 app.listen(process.env.PORT || 5180)
 console.log('listening on ', process.env.PORT)
+console.log('process.env', process.env)
+console.log('import.meta?.env', import.meta?.env)
 export const viteNodeServer = app
 const dbPath = './server/database.db'
 const db = new sqlite3.Database(dbPath)

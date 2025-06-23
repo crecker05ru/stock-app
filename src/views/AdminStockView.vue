@@ -85,10 +85,12 @@
           >
           <template #cell(buttons)>
             <div class="admin-stock__table-buttons">
-              <AppButton class="admin-stock__table-button" :isWrapper="true"
+              <AppButton class="admin-stock__table-button" :isWrapper="true" @click.stop=""
                 ><template #icon><IconShoppingCart /></template
               ></AppButton>
-              <AppButton class="admin-stock__table-button admin-stock__table-button--favorite"
+              <AppButton
+                class="admin-stock__table-button admin-stock__table-button--favorite"
+                @click.stop=""
                 ><template #icon><IconFavorite /></template
               ></AppButton>
             </div>
@@ -116,6 +118,8 @@ import CreateProduct from '@/components/modalViews/CreateProduct.vue'
 import { useModalStore } from '@/stores/modal'
 import { useRoute, useRouter } from 'vue-router'
 import { debounce } from '@/helpers/debounce.ts'
+import api from '@/api'
+
 const ImportDatabase = defineAsyncComponent(
   () => import('@/components/modalViews/ImportDatabase.vue'),
 )
@@ -287,8 +291,7 @@ async function getDataFromDB() {
   //   data.value = res
   // })
   try {
-    const response = await fetch('http://localhost:5180/db')
-    const body = await response.json()
+    const body = await api.get('/db')
     data.value = body
   } catch (e) {
     console.log(e)
@@ -301,8 +304,7 @@ async function getDataFromChinook() {
   //   data.value = res
   // })
   try {
-    const response = await fetch('http://localhost:5180/chinook')
-    const body = await response.json()
+    const body = api.get('/chinook')
     data.value = body
   } catch (e) {
     console.log(e)
@@ -311,8 +313,7 @@ async function getDataFromChinook() {
 
 async function getDataFromExceldatabse() {
   try {
-    const response = await fetch('http://localhost:5180/exceldatabase')
-    const body = await response.json()
+    const body = await api.get('/exceldatabase')
     data.value = body
   } catch (e) {
     console.log(e)
@@ -359,18 +360,12 @@ function submit() {
   console.log('sqlString', sqlString)
 
   if (selectedOptions.value.operation === 'GET') {
-    fetch('http://localhost:5180/chinook').then((res) => {
+    api.get('/chinook').then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
   } else {
-    fetch('http://localhost:5180/chinook/execute', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ value: inputValue.value }),
-    }).then((res) => {
+    api.post('/chinook/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
@@ -381,13 +376,7 @@ function execute() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:5180/db').then((res) => console.log('res', res))
 
-  fetch('http://localhost:5180/chinook/execute', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ value: inputValue.value }),
-  }).then((res) => {
+  api.post('/chinook/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
     console.log('res', res)
     getDataFromChinook()
     inputValue.value = ''
@@ -396,13 +385,7 @@ function execute() {
 
 function insert() {
   fetchs.value.push(inputValue.value)
-  fetch('http://localhost:5180/chinook/insert', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ value: inputValue.value }),
-  }).then((res) => {
+  api.post('/chinook/insert', JSON.stringify({ value: inputValue.value })).then((res) => {
     console.log('res', res)
     getDataFromChinook()
     inputValue.value = ''
@@ -420,40 +403,29 @@ async function getTables() {
   //   inputValue.value = ''
   // })
   try {
-    const response = await fetch('http://localhost:5180/tables')
-    const body = await response.json()
+    const body = await api.get('/tables')
     data.value = body
   } catch (e) {
     console.log(e)
   }
 }
 
-async function getTires(params) {
+async function getTires(params?: string) {
   console.log('getTires')
   try {
-    const response = await fetch(`http://localhost:5180/exceldatabase${params ? params : ''}`)
-    const body = await response.json()
+    const body = await api.get(`/exceldatabase${params ? params : ''}`)
+    console.log('body', body)
     tableItems.value = body?.data
     totalItems.value = body?.total
   } catch (e) {
     console.log(e)
   }
 }
+
 async function fetchTableHeaders(tableName) {
   try {
-    const response = await fetch('http://localhost:5180/exceldatabase/headers', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ tableName: 'tires' }),
-    })
-    console.log('response', response)
-    if (response?.ok) {
-      const body = await response.json()
-      console.log('fetchTableHeaders body', body)
-      // console.log(Object.keys(body))
-    }
+    const body = await api.post('/exceldatabase/headers', JSON.stringify({ tableName: 'tires' }))
+    console.log('fetchTableHeaders body', body)
   } catch (e) {
     console.log(e)
   }

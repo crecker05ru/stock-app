@@ -17,6 +17,7 @@
 import { ref } from 'vue'
 import AppInputFile from '@/components/ui/AppInputFile.vue'
 import AppButton from '@/components/ui/AppButton.vue'
+import api from '@/api'
 
 const { data, modelValue } = defineProps<{
   data?: object
@@ -41,20 +42,9 @@ async function submit() {
   try {
     const formData = new FormData()
     formData.append('file', file.value)
-    const response = await fetch('http://localhost:5180/import/db', {
-      body: formData,
-      method: 'POST',
-      // headers: {
-      //   'Content-Type': 'multipart/form-data',
-      // },
-    })
-    console.log('response', response)
-    if (response?.ok) {
-      const body = await response.json()
-      headers.value = body
-      console.log('fetchTableHeaders body', body)
-      // console.log(Object.keys(body))
-    }
+    const body = await api.post('/import/db', formData)
+    headers.value = body
+    console.log('fetchTableHeaders body', body)
   } catch (e) {
     console.log(e)
   } finally {

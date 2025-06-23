@@ -24,6 +24,7 @@ import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
+import api from '@/api'
 const stockItems = [
   {
     rating: 4.84,
@@ -97,13 +98,15 @@ const tiresList = ref()
 
 async function getTires() {
   console.log('getTires')
-  try {
-    const response = await fetch('http://localhost:5180/exceldatabase')
-    const body = await response.json()
-    tiresList.value = body?.data
-  } catch (e) {
-    console.log(e)
-  }
+  // try {
+  //   const response = await fetch('http://localhost:5180/exceldatabase')
+  //   const body = await response.json()
+  //   tiresList.value = body?.data
+  // } catch (e) {
+  //   console.log(e)
+  // }
+  const body = await api.get('/exceldatabase')
+  tiresList.value = body?.data
 }
 
 // await getTires()

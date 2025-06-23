@@ -78,6 +78,7 @@ import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import AppCheckboxSwitch from '@/components/ui/AppCheckboxSwitch.vue'
 import { useRoute } from 'vue-router'
+import api from '@/api'
 
 const route = useRoute()
 const buyOptions = ref({
@@ -91,11 +92,7 @@ console.log('${route?.params?.id}', route?.params?.id)
 
 async function fetchDetails() {
   try {
-    const response = await fetch(
-      `http://localhost:5180/exceldatabase/product-details/${route?.params?.id}`,
-    )
-    const body = await response.json()
-    console.log('response', response)
+    const body = await api.get(`/exceldatabase/product-details/${route?.params?.id}`)
     console.log('body', body)
     details.value = body?.data
   } catch (e) {

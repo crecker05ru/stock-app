@@ -1,4 +1,5 @@
 import { ref, nextTick, computed, onMounted } from 'vue'
+import api from '@/api'
 
 interface fetchData {
   selector: string
@@ -13,10 +14,10 @@ export function useIntersectionObserver(data: fetchData) {
   const fetchedComputedData = computed(() => fetchedData.value)
   const promise = new Promise(async (resolve, reject) => {
     try {
-      const res = await fetch(data.path)
+      const res = await api.get(data.path)
       let json = null
       if (res) {
-        json = await res.json()
+        json = res
         resolve(json)
       }
     } catch (e) {

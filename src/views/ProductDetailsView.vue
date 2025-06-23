@@ -101,6 +101,7 @@ import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import AppCheckboxSwitch from '@/components/ui/AppCheckboxSwitch.vue'
 import { useRoute } from 'vue-router'
+import api from '@/api'
 
 const route = useRoute()
 const buyOptions = ref({
@@ -108,7 +109,7 @@ const buyOptions = ref({
   distantMountage: false,
   store: false,
 })
-const details = {
+const details = ref({
   rating: 4,
   reviews: 4,
   qa: 6,
@@ -129,15 +130,11 @@ const details = {
   image: '',
   name: 'Шины Yokohama BluEarth*Winter V905 205 45 R17 88V Нешип',
   count: 1,
-}
+})
 
 console.log('${route?.params?.id}', route?.params?.id)
 try {
-  const response = await fetch(
-    `http://localhost:5180/exceldatabase/product-details/${route?.params?.id}`,
-  )
-  const body = await response.json()
-  console.log('response', response)
+  const body = await api.get(`/exceldatabase/product-details/${route?.params?.id}`)
   console.log('body', body)
 } catch (e) {
   console.log(e)

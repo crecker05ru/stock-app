@@ -96,6 +96,7 @@ import AppCheckboxSwitch from '@/components/ui/AppCheckboxSwitch.vue'
 import AppButton from '@/components/ui/AppButton.vue'
 import AppCounter from '@/components/ui/AppCounter.vue'
 import { useRoute } from 'vue-router'
+import api from '@/api'
 
 const route = useRoute()
 const buyOptions = ref({
@@ -130,8 +131,7 @@ function cartClick() {}
 async function getTire() {
   console.log('getTires')
   try {
-    const response = await fetch('http://localhost:5180/exceldatabase/1')
-    const body = await response.json()
+    const body = await api.get('/exceldatabase/1')
     tireDetails.value = body
   } catch (e) {
     console.log(e)
@@ -144,11 +144,7 @@ async function getTire() {
 
 async function fetchDetails() {
   try {
-    const response = await fetch(
-      `http://localhost:5180/exceldatabase/product-details/${route?.params?.id}`,
-    )
-    const body = await response.json()
-    console.log('response', response)
+    const body = await api.get(`/exceldatabase/product-details/${route?.params?.id}`)
     console.log('body', body)
     tireDetails.value = body?.data
   } catch (e) {
