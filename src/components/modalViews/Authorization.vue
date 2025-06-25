@@ -34,6 +34,15 @@ const isLoading = ref(false)
 
 function submit() {
   console.log('productForm', productForm)
+
+  // fetch(`http://localhost:5180/login`, {
+  //   body: JSON.stringify({ pass: pass.value }),
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json', // Важно!
+  //   },
+  // }).then((res) => res)
+
   userStore.login(pass.value).then((data) => {
     if (data) {
       emit('close')

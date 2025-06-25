@@ -115,6 +115,8 @@ import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import { sessionTokenMiddleware } from './middlewares/authMiddleware.js'
 import rateLimit from 'express-rate-limit'
+import jwt from 'jsonwebtoken'
+import { SECRET_KEY } from './middlewares/config.js' // Ваш секретный ключ для подписи JWT
 import {
   importExcelToSQLite,
   all,
@@ -178,7 +180,7 @@ app.use(cors(corsOptions))
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
-
+// app.use(express.json())
 // app.options('*', cors())
 // const allowCrossDomain = (req, res, next) => {
 //   res.header(`Access-Control-Allow-Origin`, `abduragimovdev.ru`)
@@ -217,8 +219,25 @@ app.use(bodyParser.json())
 //Защитите /login от брутфорса:
 app.use('/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 10 }))
 
-app.post('/login', sessionTokenMiddleware, (req, res) => {
-  res.json({ user: req.user }) // Данные из токена
+app.post('/login', async (req, res) => {
+  console.log('req.body', req.body)
+  if (req?.body?.pass === '12345') {
+    const token = jwt.sign(
+      { userId: 'admin' }, // payload (данные пользователя)
+      SECRET_KEY,
+      { expiresIn: '1h' }, // срок действия токена
+    )
+    res.cookie('sessionToken', token, {
+      httpOnly: true, // Недоступно из JavaScript (защита от XSS)
+      secure: true, // Только HTTPS (если не в разработке)
+      sameSite: 'strict', // Защита от CSRF
+      maxAge: 3600000, // Срок действия (1 час)
+    })
+
+    res.status(200).json({ user: req.user, message: 'logged', token }) // Данные из токена
+  } else {
+    res.json({ user: req.user, message: 'denied' }) // Данные из токена
+  }
 })
 
 app.get('/profile', sessionTokenMiddleware, (req, res) => {
@@ -292,53 +311,67 @@ db.serialize(() => {
   // })
 })
 
-app.post('/import/db', upload.single('file'), async (req, res) => {
-  console.log('req?.file', req?.file)
-  // const filePath = fs.readFile(req.file.path, (err, data) => {
-  //   if (err) {
-  //     return res.status(500).send('Error reading file')
-  //   }
-  //   return data.toString()
-  // })
+app.post(
+  '/import/db',
+  upload.single('file'),
+  async (req, res) => {
+    console.log('req?.file', req?.file)
+    // const filePath = fs.readFile(req.file.path, (err, data) => {
+    //   if (err) {
+    //     return res.status(500).send('Error reading file')
+    //   }
+    //   return data.toString()
+    // })
 
-  const contentDisposition = req.headers['content-disposition']
-  const contentType = req.headers['content-type']
-  console.log('contentDisposition', contentDisposition)
-  console.log('contentType', contentType)
+    const contentDisposition = req.headers['content-disposition']
+    const contentType = req.headers['content-type']
+    console.log('contentDisposition', contentDisposition)
+    console.log('contentType', contentType)
 
-  const data = {
-    chunks: req?.file?.buffer || [],
-    fileTargetPath: req.file.path,
-    fileOutputPath: serverPath,
-    dbName: req?.file?.originalname,
-  }
-  console.log('data', data)
+    const data = {
+      chunks: req?.file?.buffer || [],
+      fileTargetPath: req.file.path,
+      fileOutputPath: serverPath,
+      dbName: req?.file?.originalname,
+    }
+    console.log('data', data)
 
-  // req.on('data', (chunk) => {
-  //   data.chunks.push(chunk)
-  // })
+    // загрузки через чанки работают через middleware upload без multer
+    // через дефолтный загрузчик
+    // req.on('data', (chunk) => {
+    //   data.chunks.push(chunk)
+    // })
 
-  // req.on('end', () => {
-  //   const buffer = Buffer.concat(data.chunks)
-  //   // Save or process the buffer (which contains the file data)
-  //   console.log('buffer', buffer)
-  //   fs.writeFile('./server/uploads/uploaded-file', buffer, (err) => {
-  //     if (err) {
-  //       return res.status(500).send('Error saving file')
-  //     }
-  //     const filename = path.basename('./server/uploads/uploaded-file')
-  //     console.log('filename', filename)
-  //     res.send('File uploaded successfully')
-  //   })
-  // })
+    // req.on('end', () => {
+    //   const buffer = Buffer.concat(data.chunks)
+    //   // Save or process the buffer (which contains the file data)
+    //   console.log('buffer', buffer)
+    //   fs.writeFile('./server/uploads/uploaded-file', buffer, (err) => {
+    //     if (err) {
+    //       return res.status(500).send('Error saving file')
+    //     }
+    //     const filename = path.basename('./server/uploads/uploaded-file')
+    //     console.log('filename', filename)
+    //     res.send('File uploaded successfully')
+    //   })
+    // })
 
-  // importExcelToSQLite(sqlite3, data.fileTargetPath, data.fileOutputPath, data.dbName).catch(
-  //   (err) => {
-  //     console.error('Ошибка:', err)
-  //     // res.status(500).send('Error importing file')
-  //   },
-  // )
-})
+    // importExcelToSQLite(sqlite3, data.fileTargetPath, data.fileOutputPath, data.dbName).catch(
+    //   (err) => {
+    //     console.error('Ошибка:', err)
+    //     // res.status(500).send('Error importing file')
+    //   },
+    // )
+    res.send({ message: 'File uploaded', size: req?.file?.size })
+  },
+  (err, req, res, next) => {
+    // Обработка ошибок Multer (например, лимит размера)
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ error: 'Ошибка загрузки файла: ' + err.message })
+    }
+    res.status(500).json({ error: 'Ошибка сервера' })
+  },
+)
 
 app.get('/db', async (req, res) => {
   // const resp = await fetch('https://api.ipify.org?format=json')

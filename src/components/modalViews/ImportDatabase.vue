@@ -8,7 +8,7 @@
       class="import-database__submit"
       @click="submit"
       :isLoading="isLoading"
-      :isDisabled="!file"
+      :isDisabled="!file || isLoading"
       >Импортировать</AppButton
     >
   </div>
@@ -44,7 +44,19 @@ async function submit() {
     formData.append('file', file.value)
     const body = await api.post('/import/db', formData)
     headers.value = body
-    console.log('fetchTableHeaders body', body)
+    // const response = await fetch('http://localhost:5180/import/db', {
+    //   body: formData,
+    //   method: 'POST',
+    // })
+    // // const body = await response.json()
+    // // headers.value = body
+    // // console.log('fetchTableHeaders body', body)
+    // console.log('response', response)
+    // if (response?.ok) {
+    //   const body = await response.json()
+    //   headers.value = body
+    //   console.log('fetchTableHeaders body', body)
+    // }
   } catch (e) {
     console.log(e)
   } finally {
