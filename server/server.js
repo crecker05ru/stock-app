@@ -149,6 +149,20 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage })
 const app = express()
 const workbook = new ExcelJS.Workbook()
+
+const corsOptions = {
+  origin: [
+    'http://localhost:5173',
+    'https://abduragimovdev.ru',
+    'http://abduragimovdev.ru',
+    'https://stock.abduragimovdev.ru',
+    'http://stock.abduragimovdev.ru',
+  ], // Replace with the actual origin(s) you want to allow
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Specify allowed HTTP methods
+  credentials: true, // Allow sending cookies and HTTP authentication credentials
+  optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 200
+}
+
 const urlencodedParser = express.urlencoded({ extended: false })
 // app.use(
 //   cors({
@@ -157,16 +171,17 @@ const urlencodedParser = express.urlencoded({ extended: false })
 //     credentials: true,
 //   }),
 // )
-app.use(cors())
+app.use(cors(corsOptions))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+
 // app.options('*', cors())
-const allowCrossDomain = (req, res, next) => {
-  res.header(`Access-Control-Allow-Origin`, `abduragimovdev.ru`)
-  res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`)
-  res.header(`Access-Control-Allow-Headers`, `Content-Type`)
-  next()
-}
+// const allowCrossDomain = (req, res, next) => {
+//   res.header(`Access-Control-Allow-Origin`, `abduragimovdev.ru`)
+//   res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`)
+//   res.header(`Access-Control-Allow-Headers`, `Content-Type`)
+//   next()
+// }
 
 // app.enable('trust proxy') // Важно для корректного определения HTTPS
 
