@@ -16,7 +16,7 @@ const api = {
   },
   post: async (url: string, body: BodyInit) => {
     try {
-      const response = await fetch(`${BASE_URL}/${url}`, {
+      const response = await fetch(`${BASE_URL}${url}`, {
         body,
         method: 'POST',
       })

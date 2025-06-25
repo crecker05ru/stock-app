@@ -112,6 +112,9 @@ import fs from 'fs'
 import path from 'path'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import { sessionTokenMiddleware } from './middlewares/authMiddleware.js'
+import rateLimit from 'express-rate-limit'
 import {
   importExcelToSQLite,
   all,
@@ -172,6 +175,7 @@ const urlencodedParser = express.urlencoded({ extended: false })
 //   }),
 // )
 app.use(cors(corsOptions))
+app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -209,6 +213,17 @@ app.use(bodyParser.json())
 //   res.header('Access-Control-Allow-Headers', 'X-Requested-With')
 //   next()
 // })
+
+//Защитите /login от брутфорса:
+app.use('/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 10 }))
+
+app.post('/login', sessionTokenMiddleware, (req, res) => {
+  res.json({ user: req.user }) // Данные из токена
+})
+
+app.get('/profile', sessionTokenMiddleware, (req, res) => {
+  res.json({ user: req.user }) // Данные из токена
+})
 
 app.get('/', (req, res) => {
   res.send('change me to see updates, express~!')

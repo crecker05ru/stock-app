@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-
+import api from '@/api'
 export const useUserStore = defineStore('user', () => {
   const userData = ref({
     name: '',
@@ -16,7 +16,9 @@ export const useUserStore = defineStore('user', () => {
     return new Promise((resolve, reject) => {
       if (pass === '12345') {
         userData.value.isLogged = true
-        resolve(true)
+        api.post('/login', JSON.stringify({ pass })).then((res) => {
+          resolve({ res, success: true })
+        })
       } else {
         reject(false)
       }
