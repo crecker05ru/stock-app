@@ -150,16 +150,33 @@ const upload = multer({ storage: storage })
 const app = express()
 const workbook = new ExcelJS.Workbook()
 const urlencodedParser = express.urlencoded({ extended: false })
+// app.use(
+//   cors({
+//     origin: 'https://stock.abduragimovdev.ru', // Только HTTPS!
+//     methods: ['GET', 'POST'],
+//     credentials: true,
+//   }),
+// )
 app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 // app.options('*', cors())
 const allowCrossDomain = (req, res, next) => {
-  res.header(`Access-Control-Allow-Origin`, `example.com`)
+  res.header(`Access-Control-Allow-Origin`, `abduragimovdev.ru`)
   res.header(`Access-Control-Allow-Methods`, `GET,PUT,POST,DELETE`)
   res.header(`Access-Control-Allow-Headers`, `Content-Type`)
   next()
 }
+
+app.enable('trust proxy') // Важно для корректного определения HTTPS
+
+app.use((req, res, next) => {
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    next()
+  } else {
+    res.redirect(`https://${req.headers.host}${req.url}`)
+  }
+})
 
 // app.configure(() => {
 //   app.use(express.bodyParser())
