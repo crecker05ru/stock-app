@@ -183,15 +183,15 @@ app.use(bodyParser.json())
 //   next()
 // }
 
-app.enable('trust proxy') // Важно для корректного определения HTTPS
+// app.enable('trust proxy') // Важно для корректного определения HTTPS
 
-app.use((req, res, next) => {
-  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
-    next()
-  } else {
-    res.redirect(`https://${req.headers.host}${req.url}`)
-  }
-})
+// app.use((req, res, next) => {
+//   if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+//     next()
+//   } else {
+//     res.redirect(`https://${req.headers.host}${req.url}`)
+//   }
+// })
 
 // app.configure(() => {
 //   app.use(express.bodyParser())
