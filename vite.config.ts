@@ -6,6 +6,7 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueMacros from 'vue-macros/vite'
 import Inspect from 'vite-plugin-inspect'
+// import eslintPlugin from 'vite-plugin-eslint'
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
@@ -26,6 +27,15 @@ export default defineConfig(({ mode }) => {
       }),
 
       Inspect(),
+      // eslintPlugin(),
+      //   {
+      //   fix: true,
+      //   overrideConfig: {
+      //     rules: {
+      //       '@typescript-eslint/no-unused-vars': 'off',
+      //     },
+      //   },
+      // }
     ],
     resolve: {
       alias: {
@@ -36,8 +46,11 @@ export default defineConfig(({ mode }) => {
       preprocessorOptions: {
         scss: {
           additionalData: `
-            @import "@/assets/styles/mixins.scss";
+            @use "@/assets/styles/mixins.scss" as *;
           `,
+        },
+        sass: {
+          quietDeps: true,
         },
       },
     },

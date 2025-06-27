@@ -14,5 +14,9 @@
   "compilerOptions": {
     "module": "NodeNext",
     "types": ["vue-macros/macros-global"]
+  },
+  "rules": {
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": "off"
   }
 }
