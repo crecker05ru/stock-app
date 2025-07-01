@@ -45,6 +45,8 @@
     <div>Выбранные опции {{ selectedOptions }}</div>
     <AppButton label="Tables" @click="getTables" />
     <AppButton label="Tires" @click="getDataFromExceldatabse" />
+    <AppButton @click="createTableUniqueValues">createTableUniqueValues</AppButton>
+    <AppButton @click="getTableFilters">getTableFilters</AppButton>
     <section class="admin-stock__section">
       <textarea v-if="data" :modelValue="data"></textarea>
       <span v-if="data">{{ data }}</span>
@@ -320,6 +322,27 @@ async function getDataFromExceldatabse() {
   }
 }
 
+async function createTableUniqueValues() {
+  try {
+    const body = await api.post(
+      '/exceldatabase/unique_values',
+      JSON.stringify({ tableName: 'tires' }),
+    )
+    data.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+async function getTableFilters() {
+  try {
+    const body = await api.post('/exceldatabase/filters', JSON.stringify({ tableName: 'tires' }))
+    data.value = body
+  } catch (e) {
+    console.log(e)
+  }
+}
+
 function onPaginationChange(paginationData) {
   const url = new URL(window.location.href)
 
@@ -355,17 +378,17 @@ function submit() {
   //   inputValue.value = ''
   // })
 
-  const queryString: string = `/chinook/execute${selectedOptions.value.operation}`
+  const queryString: string = `/exceldatabse/execute${selectedOptions.value.operation}`
   const sqlString: string = `SELECT * FROM ${selectedOptions.value.table}`
   console.log('sqlString', sqlString)
 
   if (selectedOptions.value.operation === 'GET') {
-    api.get('/chinook').then((res) => {
+    api.get('/exceldatabse').then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
   } else {
-    api.post('/chinook/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
+    api.post('/exceldatabse/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
@@ -376,7 +399,7 @@ function execute() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:5180/db').then((res) => console.log('res', res))
 
-  api.post('/chinook/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
+  api.post('/exceldatabse/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
     console.log('res', res)
     getDataFromChinook()
     inputValue.value = ''

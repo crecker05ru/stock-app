@@ -1,4 +1,6 @@
 import ExcelJS from 'exceljs'
+import { promisify } from 'util'
+
 export async function importExcelToSQLite(sqlite3, excelFilePath, dbFilePath, tableName) {
   // Открываем базу данных SQLite
   const db = new sqlite3.Database(dbFilePath)
@@ -130,20 +132,118 @@ export const fetchTableHeaders = async (db, tableName) => {
   })
 }
 
-export const fetchTableHeadersWithPragma = async (db, tableName, withConfig = false) => {
+export const fetchDistinctValue = async (db, tableName, columnName) => {
   return new Promise((resolve, reject) => {
-    db.all(`PRAGMA table_info(${tableName})`, (err, rows) => {
-      if (err) reject(err)
-      const columnNames = withConfig
-        ? rows.map((row) => ({
-            name: row.name,
-            type: row.type, // Тип данных (например, 'INTEGER', 'TEXT')
-            notNull: row.notnull === 1, // true, если NOT NULL
-            defaultValue: row.dflt_value, // Значение по умолчанию
-            isPrimaryKey: row.pk === 1, // true, если PRIMARY KEY
-          }))
-        : rows.map((row) => row.name)
-      resolve(columnNames)
-    })
+    db.all(
+      `SELECT DISTINCT ${columnName}
+      FROM ${tableName}`,
+      (err, res) => {
+        console.log('fetchDistinctValue res', res)
+        if (err) reject(err)
+        resolve(res)
+      },
+    )
   })
+}
+
+export const fetchDistinctValues = async (db, tableName) => {
+  db.allAsync = promisify(db.all)
+  db.runAsync = promisify(db.run)
+  db.getAsync = promisify(db.get)
+  let response
+  const result = {}
+
+  const tableInfo = await db.allAsync(`PRAGMA table_info(${tableName})`)
+  const ignoreFields = [
+    'id',
+    'name',
+    'model',
+    'updated_at',
+    'description',
+    'image',
+    'count',
+    'article',
+    'reviews',
+    'price',
+  ]
+  const filteredTableInfo = tableInfo.filter((i) => !ignoreFields.includes(i.name))
+  console.log('filteredTableInfo', filteredTableInfo)
+
+  for (const col of filteredTableInfo) {
+    response = await all(
+      db,
+      `SELECT DISTINCT ${col.name} FROM ${tableName} WHERE ${col.name} IS NOT NULL`,
+    )
+    result[col.name] = response
+    console.log(`response`, response)
+  }
+
+  console.log(`result`, result)
+
+  // return new Promise((resolve, reject) => {
+  //   resolve(result)
+  // })
+  return result
+}
+
+export const fetchTableHeadersWithPragma = async (db, tableName, withConfig = false) => {}
+
+export const getUniqueValues = async (db, tableName) => {
+  // Промсифицируем методы
+  db.allAsync = promisify(db.all)
+  db.runAsync = promisify(db.run)
+  let response
+  let result = {}
+  try {
+    // Получаем информацию о таблице
+    const tableInfo = await db.allAsync(`PRAGMA table_info(${tableName})`)
+    const ignoreFields = [
+      'id',
+      'name',
+      'model',
+      'updated_at',
+      'description',
+      'image',
+      'count',
+      'article',
+      'reviews',
+      'price',
+    ]
+    const filteredTableInfo = tableInfo.filter((i) => !ignoreFields.includes(i.name))
+    console.log('filteredTableInfo', filteredTableInfo)
+
+    // Создаем SQL для новой таблицы
+    const createTableSQL = `CREATE TABLE IF NOT EXISTS ${tableName}_unique_values (
+    ${filteredTableInfo.map((col) => `${col.name} ${col.type}`).join(', ')}
+  )`
+    response = await db.runAsync(createTableSQL)
+
+    // Для каждого столбца
+    for (const col of filteredTableInfo) {
+      console.log('col.name', col.name)
+      try {
+        await db.allAsync(
+          `
+          INSERT OR IGNORE INTO ${tableName}_unique_values(${col.name})
+          SELECT DISTINCT ${col.name} FROM ${tableName}
+          WHERE ${col.name} IS NOT NULL
+        `,
+          (err, row) => (result[col.name] = row),
+        )
+
+        console.log(`Обработан столбец: ${col.name}`)
+        // return result
+      } catch (colErr) {
+        console.error(`Ошибка в столбце ${col.name}:`, colErr.message)
+        return response
+      }
+    }
+
+    console.log('Все уникальные значения сохранены')
+    console.log('result', result)
+    return result
+  } catch (err) {
+    console.error('Критическая ошибка:', err)
+  } finally {
+  }
 }

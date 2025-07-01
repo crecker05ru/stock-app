@@ -8,6 +8,7 @@
       :type="props?.type"
       @change="inputChange"
       @input="onInput"
+      @keydown="onKeydown"
       v-model="modelValue"
     />
   </div>
@@ -18,6 +19,8 @@ const $emit = defineEmits<{
   inputChange: [value: Event]
   change: [value: string | number]
   'update:modelValue': [value: string | number]
+  keydown: [value: string | number]
+  enter: [value: string | number]
 }>()
 
 const modelValue = defineModel()
@@ -40,6 +43,14 @@ function onInput(event: Event) {
   const value = (event?.target as HTMLInputElement)?.value
   $emit('update:modelValue', value)
   $emit('change', value)
+}
+
+function onKeydown(event: KeyboardEvent) {
+  const value = (event?.target as HTMLInputElement)?.value
+  $emit('keydown', value)
+  if (event.key === 'Enter') {
+    $emit('enter', value)
+  }
 }
 // watch(
 //   () => props.modelValue,
