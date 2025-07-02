@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import { useUserStore } from '@/stores/user'
+import api from '@/api/index.ts'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,6 +58,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
+
+  if (!userStore.userData.isAuth) {
+    userStore.getProfile()
+  }
   if (to.fullPath.includes('/admin-stock') && !userStore.userData?.isLogged) {
     next('/')
   }

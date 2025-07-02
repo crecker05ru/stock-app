@@ -61,7 +61,7 @@ const corsOptions = {
     'http://stock.abduragimovdev.ru',
   ], // Replace with the actual origin(s) you want to allow
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Specify allowed HTTP methods
-  credentials: true, // Allow sending cookies and HTTP authentication credentials
+  credentials: true, // Allow sending cookies and HTTP authentication credentials // Разрешить куки
   optionsSuccessStatus: 204, // Some legacy browsers (IE11, various SmartTVs) choke on 200
 }
 
@@ -122,14 +122,20 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign(
       { userId: 'admin' }, // payload (данные пользователя)
       SECRET_KEY,
-      { expiresIn: '1h' }, // срок действия токена
+      { expiresIn: '8h' }, // срок действия токена
     )
-    res.cookie('sessionToken', token, {
-      httpOnly: true, // Недоступно из JavaScript (защита от XSS)
-      secure: true, // Только HTTPS (если не в разработке)
-      sameSite: 'strict', // Защита от CSRF
-      maxAge: 3600000, // Срок действия (1 час)
-    })
+    if (!req.cookies?.['sessionToken']) {
+      res.cookie('sessionToken', token, {
+        httpOnly: true, // Недоступно из JavaScript (защита от XSS)
+        // secure: true, // Только HTTPS (если не в разработке)
+        // sameSite: 'strict', // Защита от CSRF
+        sameSite: 'None', // Разрешить кросс-сайтовые запросы (требует secure: true)
+        // maxAge: 3600000, // Срок действия (1 час)
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
+        // domain: '.example.com', // точка в начале для поддоменов
+        path: '/', // доступна на всех путях
+      })
+    }
 
     res.status(200).json({ user: req.user, message: 'logged', token }) // Данные из токена
   } else {
@@ -137,8 +143,18 @@ app.post('/login', async (req, res) => {
   }
 })
 
-app.get('/profile', sessionTokenMiddleware, (req, res) => {
-  res.json({ user: req.user }) // Данные из токена
+// app.get('/profile', sessionTokenMiddleware, (req, res) => {
+//   console.log('Client Cookies:', req.cookies)
+//   res.json({ user: req.user }) // Данные из токена
+// })
+
+app.get('/profile', (req, res) => {
+  console.log('Client Cookies:', req.cookies)
+  if (req.cookies?.['sessionToken']) {
+    res.json({ user: req.user, token: req.cookies?.['sessionToken'] })
+  } else {
+    res.json({ user: 'no logged' }) // Данные из токена
+  }
 })
 
 app.get('/', (req, res) => {

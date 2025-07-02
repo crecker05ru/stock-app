@@ -7,16 +7,29 @@ export const useUserStore = defineStore('user', () => {
     cartItems: 0,
     favorites: 0,
     isLogged: false,
+    isAuth: false,
   })
 
+  function getProfile() {
+    return new Promise((resolve, reject) => {
+      api.get('/profile').then((res) => {
+        userData.value.isAuth = true
+        console.log('res', res)
+        console.log('res?.token', res?.token)
+        if (res?.token) {
+          userData.value.isLogged = true
+        }
+        resolve({ res, success: true })
+      })
+    })
+  }
+
   function login(pass: string) {
-    if (pass === '12345') {
-      userData.value.isLogged = true
-    }
     return new Promise((resolve, reject) => {
       if (pass === '12345') {
         userData.value.isLogged = true
         api.post('/login', JSON.stringify({ pass })).then((res) => {
+          console.log('res', res)
           resolve({ res, success: true })
         })
       } else {
@@ -35,5 +48,12 @@ export const useUserStore = defineStore('user', () => {
 
   async function getUserData() {}
 
-  return { userData, login, updateCart, updateFavorite, getUserData }
+  return {
+    userData,
+    getProfile,
+    login,
+    updateCart,
+    updateFavorite,
+    getUserData,
+  }
 })

@@ -26,6 +26,7 @@ const api = {
   get: async (url: string) => {
     try {
       const response = await fetch(`${BASE_URL}${url}`, {
+        credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -45,6 +46,7 @@ const api = {
     console.log('typeOfContent', typeOfContent)
     try {
       const response = await fetch(`${BASE_URL}${url}`, {
+        credentials: 'include',
         headers: {
           Authorization: `Bearer ${token}`,
           ...(typeOfContent && { 'Content-Type': typeOfContent }), // Важно!
