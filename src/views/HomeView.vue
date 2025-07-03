@@ -1,7 +1,12 @@
 <template>
   <div class="home">
     <div class="home__filters">
-      <FilterBlock class="home__filter" v-model="tiresFiltersData" />
+      <FilterBlock
+        class="home__filter"
+        v-if="tiresFiltersOptions"
+        v-model="tiresFiltersData"
+        :options="tiresFiltersOptions"
+      />
     </div>
     <div class="home__banners"></div>
     <div class="home__categories">
@@ -56,11 +61,13 @@ import TheWelcome from '../components/TheWelcome.vue'
 import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user.ts'
+import { useTiresStore } from '@/stores/tires.ts'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const userStore = useUserStore()
+const tiresStore = useTiresStore()
 const stockItems = [
   {
     rating: 4.84,
@@ -130,9 +137,22 @@ const tiresFiltersData = ref({
   options: [],
 })
 
+const tiresFiltersOptions = ref(null)
+
 function onCartClick(count: number) {
   userStore.updateCart(count)
 }
+
+await tiresStore.getFilters().then((res) => {
+  console.log('res?.data', res?.data)
+  if (res?.data) {
+    tiresFiltersOptions.value = {}
+    for (const key in res.data) {
+      tiresFiltersOptions.value[key] = res.data[key]
+    }
+    console.log('tiresFiltersOptions.value', tiresFiltersOptions.value)
+  }
+})
 </script>
 <style lang="scss" scoped>
 .home {

@@ -35,7 +35,7 @@ console.log('data', data)
 console.log('modelValue', modelValue)
 async function fetchTableHeaders(tableName: string) {
   try {
-    const body = await api.post('/exceldatabase/headers', JSON.stringify({ tableName }))
+    const body = await api.post('/exceldatabase/headers', { tableName })
     headers.value = body
     console.log('fetchTableHeaders body', body)
   } catch (e) {

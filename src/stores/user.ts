@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', () => {
     return new Promise((resolve, reject) => {
       if (pass === '12345') {
         userData.value.isLogged = true
-        api.post('/login', JSON.stringify({ pass })).then((res) => {
+        api.post('/login', { pass }).then((res) => {
           console.log('res', res)
           resolve({ res, success: true })
         })

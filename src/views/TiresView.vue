@@ -1,7 +1,13 @@
 <template>
   <div class="tires">
     <div class="tires__filters">
-      <FilterBlock class="tires__filter" v-model="tiresFiltersData" />
+      <FilterBlock
+        class="tires__filter"
+        v-if="tiresFiltersOptions"
+        v-model="tiresFiltersData"
+        :options="tiresFiltersOptions"
+        @submit="onFiltersSubmit"
+      />
     </div>
     <div class="tires__banners"></div>
     <section class="tires__section">
@@ -10,7 +16,7 @@
         <StockItem
           class="tires__item"
           v-for="(item, index) in tiresList"
-          :key="index"
+          :key="item.id"
           :data="item"
           @itemTextClick="$router.push(`tires/${item?.id}`)"
         />
@@ -25,6 +31,11 @@ import FilterBlock from '../components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import api from '@/api'
+import { useTiresStore } from '@/stores/tires.ts'
+
+const tiresStore = useTiresStore()
+const tiresFiltersOptions = ref(null)
+
 const stockItems = [
   {
     rating: 4.84,
@@ -86,7 +97,7 @@ const stockItems = [
 
 const tiresFiltersData = ref({
   width: '',
-  height: '',
+  profile: '',
   diametr: '',
   manufactor: '',
   season: '',
@@ -111,6 +122,40 @@ async function getTires() {
 
 // await getTires()
 // getTires()
+
+function execute() {
+  api.post('/exceldatabse/execute', { value: '' }).then((res) => {})
+}
+
+function onFiltersSubmit(data) {
+  console.log('onFiltersSubmit(data)', data)
+  const optionsArr = []
+  for (const key in data) {
+    if (data?.[key] && !Array.isArray(data?.[key])) {
+      const string = `${`${key} LIKE '%${data[key]}%'`}`
+      optionsArr.push(string)
+    }
+  }
+  // const queryString = `SELECT * FROM tires WHERE ${data?.width ? `width LIKE '%${data.width}%' LIMIT 100` : ''}`
+  const queryString = `SELECT * FROM tires WHERE ${optionsArr.join(' AND ')} LIMIT 100`
+  api.post('/exceldatabse/executeTires', { value: queryString }).then((res) => {
+    console.log('res', res)
+    if (res?.products) {
+      tiresList.value = res?.products
+    }
+  })
+}
+
+await tiresStore.getFilters().then((res) => {
+  console.log('res?.data', res?.data)
+  if (res?.data) {
+    tiresFiltersOptions.value = {}
+    for (const key in res.data) {
+      tiresFiltersOptions.value[key] = res.data[key]
+    }
+    console.log('tiresFiltersOptions.value', tiresFiltersOptions.value)
+  }
+})
 
 onMounted(() => {
   console.log('onMounted', onMounted)

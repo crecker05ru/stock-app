@@ -9,12 +9,47 @@
 
     <div class="tyre-filter__body">
       <div class="tyre-filter__selectors">
-        <AppSelect placeholder="Ширина" v-model="filtersData.width" />
-        <div class="tyre-filter__selector">Высота</div>
-        <div class="tyre-filter__selector">Диаметр</div>
-        <div class="tyre-filter__selector">Производитель</div>
-        <div class="tyre-filter__selector">Сезон</div>
-        <div class="tyre-filter__selector">Вн-ий диаметр</div>
+        <AppSelect
+          placeholder="Ширина"
+          v-model="filtersData.width"
+          :options="options?.width"
+          :hasDefaultOption="true"
+          optionKeyField="width"
+          optionNameField="width"
+        />
+        <AppSelect
+          placeholder="Высота"
+          v-model="filtersData.profile"
+          :options="options?.profile"
+          optionKeyField="profile"
+          optionNameField="profile"
+        />
+        <AppSelect
+          placeholder="Диаметр"
+          :options="options?.diametr"
+          optionKeyField="diametr"
+          optionNameField="diametr"
+        />
+        <AppSelect
+          placeholder="Производитель"
+          v-model="filtersData.manufactor"
+          :options="options?.manufactor"
+          optionKeyField="manufactor"
+          optionNameField="manufactor"
+        />
+        <AppSelect
+          placeholder="Сезон"
+          v-model="filtersData.season"
+          :options="options?.season"
+          optionKeyField="season"
+          optionNameField="season"
+        />
+        <AppSelect placeholder="Вн-ий диаметр" v-model="filtersData.outer" />
+        <!-- <div class="tyre-filter__selector">Высота</div> -->
+        <!-- <div class="tyre-filter__selector">Диаметр</div> -->
+        <!-- <div class="tyre-filter__selector">Производитель</div> -->
+        <!-- <div class="tyre-filter__selector">Сезон</div> -->
+        <!-- <div class="tyre-filter__selector">Вн-ий диаметр</div> -->
       </div>
       <div class="tyre-filter__checkboxes">
         <!-- <label class="tyre-filter__checkbox">
@@ -27,14 +62,13 @@
           <span>Run Flat</span>
         </label> -->
         <AppCheckbox label="Run Flat" value="runflat" v-model="filtersData.options" />
-        <label class="tyre-filter__checkbox">
+        <AppCheckbox label="Усыпанность (с)" value="sortof" v-model="filtersData.options" />
+        <!-- <label class="tyre-filter__checkbox">
           <input type="checkbox" v-model="filtersData.options" />
           <span>Усыпанность (с)</span>
-        </label>
+        </label> -->
       </div>
-      <button class="tyre-filter__submit-button">
-        <span class="tyre-filter__submit-button-text">Подобрать</span>
-      </button>
+      <AppButton label="Подобрать" @click="findTires"></AppButton>
     </div>
   </div>
 </template>
@@ -42,10 +76,11 @@
 import { defineProps, defineEmits, toRef, ref, watch, onMounted } from 'vue'
 import AppSelect from '@/components/ui/AppSelect.vue'
 import AppCheckbox from '@/components/ui/AppCheckbox.vue'
-
+import AppButton from '@/components/ui/AppButton.vue'
 const emit = defineEmits<{
   buttonClick: [value: void]
   'update:modelValue': [value: object | undefined]
+  submit: [value: object | undefined]
 }>()
 
 const props = defineProps<{
@@ -61,13 +96,19 @@ const props = defineProps<{
 
 const filtersData = ref({
   width: '',
-  height: '',
+  profile: '',
   diametr: '',
   manufactor: '',
   season: '',
   outerDiametr: '',
   options: [],
 })
+
+const filtersDataOptions = ref({})
+
+function findTires() {
+  emit('submit', filtersData.value)
+}
 
 watch(
   filtersData.value,
@@ -80,6 +121,7 @@ watch(
 
 onMounted(() => {
   // filtersData.value = props.modelValue
+  console.log('FilterBlocks props', props)
 })
 </script>
 <style scoped lang="scss">
@@ -90,7 +132,7 @@ onMounted(() => {
   box-shadow: 0px 4px 1px 1px #000000aa;
   border: var(--border-block);
   border-color: var(--border-color-block);
-  overflow: hidden;
+  // overflow: hidden;
   &__header {
     display: grid;
     grid-template: auto/ 60% auto;

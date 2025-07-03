@@ -44,7 +44,7 @@
         <AppPaginator
           @change="onPaginatorChange"
           :totalItems="props.totalItems"
-          :perPage="props.perPage"
+          :pageSize="props.pageSize"
       /></slot>
     </div>
   </div>
@@ -70,7 +70,7 @@ const props = defineProps({
   tableScheme: { type: Object, required: false },
   tableHeadScheme: { type: Object, required: false },
   totalItems: { type: Number, required: true },
-  perPage: { type: Number, required: true },
+  pageSize: { type: Number, required: true },
   isClickable: { type: Boolean, required: false },
 })
 

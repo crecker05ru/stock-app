@@ -16,12 +16,19 @@
       />
     </button>
     <ul
-      v-if="props?.options?.length"
+      v-if="props?.options?.length || hasDefaultOption"
       :class="[
         'app-select__dropdown-list',
         { 'app-select__dropdown-list_active': isDropdownOpened },
       ]"
     >
+      <li
+        class="app-select__dropdown-item"
+        v-if="hasDefaultOption"
+        @click.stop="selectOption(null)"
+      >
+        Все
+      </li>
       <li
         class="app-select__dropdown-item"
         v-for="(option, index) in props?.options"
@@ -46,6 +53,7 @@ const props = defineProps<{
   label?: string
   placeholder?: string
   options?: object | []
+  hasDefaultOption?: boolean
   optionNameField?: object[keyof object]
   optionKeyField?: object[keyof object]
 }>()

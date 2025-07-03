@@ -402,7 +402,7 @@ app.post('/exceldatabase/filters', async (req, res) => {
 app.get('/exceldatabase', async (req, res) => {
   console.error('app.get req?.query', req?.query)
   console.error('app.get req?.params', req?.params)
-  const limit = 24
+  const limit = req?.query?.pageSize ? req?.query.pageSize : 24
   const offset = req?.query?.page ? req?.query?.page * limit : 0
   exceldatabse.all(
     `SELECT * FROM tires ${req?.query?.search ? `WHERE name LIKE '%${req?.query?.search}%'` : ''} LIMIT ${limit} OFFSET ${offset}`,
@@ -470,6 +470,25 @@ app.post('/exceldatabse/execute', async (req, res) => {
   } catch (error) {
     console.log('/exceldatabse/execute', error)
     res.send('exceldatabse error', error)
+  } finally {
+  }
+})
+
+app.post('/exceldatabse/executeTires', async (req, res) => {
+  console.log('req.body', req.body)
+  if (!`${req.body.value}`) {
+    res.send('no query')
+  }
+  try {
+    await all(exceldatabse, `${req.body.value}`)
+      .then((products) => {
+        console.log('products', products)
+        res.send({ products })
+      })
+      .catch((err) => console.log('all err', err))
+  } catch (error) {
+    console.log('/exceldatabse/executeTires', error)
+    res.send('/exceldatabse/executeTires error', error)
   } finally {
   }
 })

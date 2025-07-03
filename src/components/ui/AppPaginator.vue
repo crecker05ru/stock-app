@@ -49,23 +49,23 @@ const emit = defineEmits<{
 const {
   modelValue = 1,
   totalItems = 1,
-  perPage = 24,
+  pageSize = 24,
 } = defineProps({
   modelValue: { type: Number, required: false },
   totalItems: { type: Number, required: true },
-  perPage: { type: Number, required: true },
+  pageSize: { type: Number, required: true },
 })
 
 const currentPage = ref(1)
 
 const paginatorData = ref({
-  pageSize: perPage,
+  pageSize: pageSize,
   totalItems: totalItems,
   currentPage: modelValue,
 })
 
 const pageSizeOptions = ref([24, 48, 78, 96])
-const totalPages = computed(() => Math.ceil(totalItems / perPage))
+const totalPages = computed(() => Math.ceil(totalItems / paginatorData.value.pageSize))
 const buttons = computed(() => Array.from({ length: totalPages.value }, (_, i) => i + 1))
 const buttonsToView = computed(() => {
   const viewButtonsOffset = 3

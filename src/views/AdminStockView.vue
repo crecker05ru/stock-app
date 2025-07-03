@@ -324,10 +324,7 @@ async function getDataFromExceldatabse() {
 
 async function createTableUniqueValues() {
   try {
-    const body = await api.post(
-      '/exceldatabase/unique_values',
-      JSON.stringify({ tableName: 'tires' }),
-    )
+    const body = await api.post('/exceldatabase/unique_values', { tableName: 'tires' })
     data.value = body
   } catch (e) {
     console.log(e)
@@ -336,7 +333,7 @@ async function createTableUniqueValues() {
 
 async function getTableFilters() {
   try {
-    const body = await api.post('/exceldatabase/filters', JSON.stringify({ tableName: 'tires' }))
+    const body = await api.post('/exceldatabase/filters', { tableName: 'tires' })
     data.value = body
   } catch (e) {
     console.log(e)
@@ -348,10 +345,12 @@ function onPaginationChange(paginationData) {
 
   // If your expected result is "http://foo.bar/?x=1&y=2&x=42"
   url.searchParams.set('page', paginationData.currentPage)
+  url.searchParams.set('pageSize', paginationData.pageSize)
   url.searchParams.set('search', inputSearchValue.value)
 
   const params = new URLSearchParams(paginationData)
   params.set('page', paginationData.currentPage)
+  params.set('pageSize', paginationData.pageSize)
   const urlSearchParams = new URLSearchParams(window.location.search)
   console.log('params', params)
   console.log('route.params', route.params)
@@ -388,7 +387,7 @@ function submit() {
       inputValue.value = ''
     })
   } else {
-    api.post('/exceldatabse/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
+    api.post('/exceldatabse/execute', { value: inputValue.value }).then((res) => {
       console.log('res', res)
       inputValue.value = ''
     })
@@ -399,7 +398,7 @@ function execute() {
   fetchs.value.push(inputValue.value)
   // fetch('http://localhost:5180/db').then((res) => console.log('res', res))
 
-  api.post('/exceldatabse/execute', JSON.stringify({ value: inputValue.value })).then((res) => {
+  api.post('/exceldatabse/execute', { value: inputValue.value }).then((res) => {
     console.log('res', res)
     getDataFromChinook()
     inputValue.value = ''
@@ -408,7 +407,7 @@ function execute() {
 
 function insert() {
   fetchs.value.push(inputValue.value)
-  api.post('/chinook/insert', JSON.stringify({ value: inputValue.value })).then((res) => {
+  api.post('/chinook/insert', { value: inputValue.value }).then((res) => {
     console.log('res', res)
     getDataFromChinook()
     inputValue.value = ''
@@ -447,7 +446,7 @@ async function getTires(params?: string) {
 
 async function fetchTableHeaders(tableName) {
   try {
-    const body = await api.post('/exceldatabase/headers', JSON.stringify({ tableName: 'tires' }))
+    const body = await api.post('/exceldatabase/headers', { tableName: 'tires' })
     console.log('fetchTableHeaders body', body)
   } catch (e) {
     console.log(e)

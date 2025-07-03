@@ -16,20 +16,21 @@ function checkCookie() {
 
 const max_age_seconds = 31 * 24 * 60 * 60
 
-let token
+const token = ''
 // if (!token) {
 //   token = checkCookie()
 // }
 
 // document.cookie = `access_token=${token}; path=/; max-age=${max_age_seconds};`
 const api = {
-  get: async (url: string) => {
+  get: async (url: string, signal?: AbortSignal) => {
     try {
       const response = await fetch(`${BASE_URL}${url}`, {
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${token}`,
+          ...(token && { Authorization: `Bearer ${token}` }),
         },
+        signal,
       })
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`)
@@ -40,19 +41,21 @@ const api = {
       console.error(error?.message)
     }
   },
-  post: async (url: string, body: BodyInit) => {
+  post: async (url: string, body: BodyInit | object = {}, signal?: AbortSignal) => {
     console.log('body', typeof body, body)
-    const typeOfContent = typeof body === 'string' ? 'application/json' : null
-    console.log('typeOfContent', typeOfContent)
+    // const typeOfContent = typeof body === 'string' ? 'application/json' : null
+    const isObjectType = body instanceof FormData ? null : 'application/json'
+    console.log('isObjectType', isObjectType)
     try {
       const response = await fetch(`${BASE_URL}${url}`, {
         credentials: 'include',
         headers: {
-          Authorization: `Bearer ${token}`,
-          ...(typeOfContent && { 'Content-Type': typeOfContent }), // Важно!
+          ...(token && { Authorization: `Bearer ${token}` }),
+          ...(isObjectType && { 'Content-Type': isObjectType }), // Важно!
         },
-        body,
+        body: isObjectType ? JSON.stringify(body) : body,
         method: 'POST',
+        signal,
       })
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`)
