@@ -3,7 +3,7 @@
     <div class="tires__filters">
       <FilterBlock
         class="tires__filter"
-        v-if="tiresFiltersOptions"
+        v-if="tiresStore.tiresData?.filters"
         v-model="tiresFiltersData"
         :options="tiresFiltersOptions"
         @submit="onFiltersSubmit"
@@ -146,16 +146,20 @@ function onFiltersSubmit(data) {
   })
 }
 
-await tiresStore.getFilters().then((res) => {
-  console.log('res?.data', res?.data)
-  if (res?.data) {
-    tiresFiltersOptions.value = {}
-    for (const key in res.data) {
-      tiresFiltersOptions.value[key] = res.data[key]
-    }
-    console.log('tiresFiltersOptions.value', tiresFiltersOptions.value)
+console.log('tiresStore', tiresStore.tiresData)
+if (!tiresStore.tiresData.filters) {
+  await tiresStore.getFilters().then((res) => {
+    console.log('res?.data', tiresStore.tiresData.filters)
+  })
+}
+
+if (tiresStore.tiresData.filters) {
+  tiresFiltersOptions.value = {}
+  for (const key in tiresStore.tiresData.filters) {
+    tiresFiltersOptions.value[key] = tiresStore.tiresData.filters[key]
   }
-})
+  console.log('tiresFiltersOptions.value', tiresFiltersOptions.value)
+}
 
 onMounted(() => {
   console.log('onMounted', onMounted)

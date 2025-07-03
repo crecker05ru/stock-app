@@ -16,8 +16,10 @@ export const useTiresStore = defineStore('tires', () => {
           if (res?.data) {
             tiresData.value.items = res?.data
             tiresData.value.total = res?.total
+            resolve(res)
+          } else {
+            reject(null)
           }
-          resolve(res)
         })
       })
     }
