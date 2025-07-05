@@ -162,10 +162,24 @@ onActivated(async () => await fetchDetails())
 .details {
 }
 .product-details {
+  position: relative;
   display: grid;
   grid-template: 72px 38px 360px / repeat(3, minmax(240px, 1fr));
   // justify-items: center;
   // justify-items: stretch;
+
+  @include mainbreak {
+    grid-template: 72px 38px minmax(240px, 1fr) / repeat(3, minmax(240px, 1fr));
+  }
+
+  @include tablet {
+    grid-template: 360px / minmax(240px, 1fr);
+  }
+  &__seasons {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+  }
   &__image-block {
     // margin-right: 28px;
     // justify-content: stretch;
@@ -179,20 +193,41 @@ onActivated(async () => await fetchDetails())
     border: 1px solid var(--border-color-block);
     border-radius: var(--border-radius-button);
     background-color: var(--background-color-item);
+    @include mainbreak {
+      // grid-row: span 2;
+    }
+    @include tablet {
+      grid-row: span 1;
+      overflow: hidden;
+    }
   }
   &__image-block-img {
     display: block;
     margin-left: auto;
     margin-right: auto;
+
+    @include mainbreak {
+      max-width: 100%;
+      max-height: 100%;
+      // margin-left: 0;
+    }
   }
   &__header-block {
     padding-left: 26px;
     grid-column: span 2;
     // grid-row: span 2;
+
+    @include tablet {
+      grid-column: span 1;
+      padding-left: 0;
+    }
   }
   &__header-block-title {
     font-size: 26px;
     font-weight: 500;
+    @include tablet {
+      padding-top: 24px;
+    }
   }
   &__details-block {
     padding-top: 18px;
@@ -233,6 +268,9 @@ onActivated(async () => await fetchDetails())
   &__reviews-block {
     padding-left: 26px;
     font-size: 16px;
+    @include tablet {
+      padding-left: 0;
+    }
   }
   &__switch-row {
     display: flex;

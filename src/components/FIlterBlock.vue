@@ -29,6 +29,7 @@
           :options="options?.diametr"
           optionKeyField="diametr"
           optionNameField="diametr"
+          v-model="filtersData.diametr"
         />
         <AppSelect
           placeholder="Производитель"
