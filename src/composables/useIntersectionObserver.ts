@@ -1,14 +1,18 @@
-import { ref, nextTick, computed, onMounted } from 'vue'
+import { ref, nextTick, computed, onMounted, toValue, watchEffect } from 'vue'
 import api from '@/api'
 
 interface fetchData {
   selector: string
   path: string
   target: HTMLElement
+  root?: HTMLElement
+  isWatchable?: boolean
+  threshold?: number
 }
 export function useIntersectionObserver(data: fetchData) {
   const observer = ref(null)
   const element = ref(data?.target)
+  const entryRef = ref()
   const isElementIntersecting = ref(false)
   const fetchedData = ref()
   const fetchedComputedData = computed(() => fetchedData.value)
@@ -28,6 +32,7 @@ export function useIntersectionObserver(data: fetchData) {
 
   const observerCallback = function (entries, observer) {
     const entry = entries[0]
+    entryRef.value = entry
     if (entry?.isIntersecting) {
       observer.unobserve(element.value)
     }
@@ -47,6 +52,18 @@ export function useIntersectionObserver(data: fetchData) {
     })
   }
 
+  if (data?.isWatchable) {
+    nextTick(() => {
+      if (!element.value) {
+        element.value = document.querySelector(data.selector)
+      }
+      observer.value = new IntersectionObserver(observerCallback, {
+        threshold: 0.5,
+      })
+      if (element.value) observer.value.observe(element.value)
+    })
+  }
+
   onMounted(() => {
     nextTick(() => {
       if (!element.value) {
@@ -59,9 +76,23 @@ export function useIntersectionObserver(data: fetchData) {
     })
   })
 
+  watchEffect(async () => {
+    if (data?.isWatchable) {
+      const dataValue = toValue(data)
+      element.value = document.querySelector(data.selector)
+      observer.value = new IntersectionObserver(observerCallback, {
+        root: data?.root ? data.root : document.body,
+        // rootMargin: data?.rootMargin ? data.rootMargin : "0px"
+        threshold: data?.threshold ? data.threshold : 0.5,
+      })
+      if (element.value) observer.value.observe(element.value)
+    }
+  })
+
   return {
     observer,
     element,
     isElementIntersecting,
+    entryRef,
   }
 }
