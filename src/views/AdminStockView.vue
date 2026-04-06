@@ -104,8 +104,8 @@
 </template>
 <script setup lang="ts">
 import { defineAsyncComponent, ref, onMounted } from 'vue'
-import TheWelcome from '../components/TheWelcome.vue'
-import FilterBlock from '../components/FilterBlock.vue'
+import TheWelcome from '@/components/TheWelcome.vue'
+import FilterBlock from '@/components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import AppInput from '@/components/ui/AppInput.vue'
 import AppInputFile from '@/components/ui/AppInputFile.vue'

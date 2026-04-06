@@ -88,8 +88,8 @@
 </template>
 <script setup lang="ts">
 import { onMounted, ref, onActivated } from 'vue'
-import TheWelcome from '../components/TheWelcome.vue'
-import FilterBlock from '../components/FilterBlock.vue'
+import TheWelcome from '@/components/TheWelcome.vue'
+import FilterBlock from '@/components/FilterBlock.vue'
 import StockItem from '@/components/ui/StockItem.vue'
 import IconArrowRight from '@/components/icons/IconArrowRight.vue'
 import AppCheckboxSwitch from '@/components/ui/AppCheckboxSwitch.vue'
