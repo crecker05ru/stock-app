@@ -8,6 +8,25 @@ import VueMacros from 'vue-macros/vite'
 import Inspect from 'vite-plugin-inspect'
 // import eslintPlugin from 'vite-plugin-eslint'
 
+const htmlPlugin = () => {
+  return {
+    name: 'html-transform',
+    transformIndexHtml(html) {
+      return [
+        {
+          tag: 'script',
+          attrs: {
+            type: 'module',
+            src: 'https://telegram.org/js/telegram-web-app.js',
+            defer: true,
+          },
+        },
+      ]
+      // return html.replace(/<title>(.*?)<\/title>/, `<title>Title replaced!</title>`)
+    },
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
@@ -16,6 +35,7 @@ export default defineConfig(({ mode }) => {
     base: process.env.APP_BASE,
     assetsInclude: ['**/'],
     plugins: [
+      htmlPlugin(),
       // vue(),
       // vueJsx(),
       vueDevTools(),

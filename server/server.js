@@ -26,6 +26,18 @@ import {
   fetchDistinctValues,
 } from './utils.js'
 
+import { Bot } from 'grammy'
+
+console.log('process.env.TG_BOT_KEY', process.env.TG_BOT_KEY)
+const bot = new Bot(`${process.env.TG_BOT_KEY}`)
+console.log('bot', bot)
+// Register listeners to handle messages
+bot.command('start', (ctx) => ctx.reply('Салам алейкум, я бот'))
+bot.on('message:text', (ctx) => ctx.reply('Ты написал ' + ctx.message.text))
+
+// Start the bot (using long polling)
+bot.start()
+
 const serverPath = './server/'
 // const upload = multer({
 //   dest: './server/uploads/',
