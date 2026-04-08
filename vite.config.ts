@@ -18,7 +18,7 @@ const htmlPlugin = () => {
           attrs: {
             type: 'module',
             src: 'https://telegram.org/js/telegram-web-app.js',
-            defer: true,
+            defer: false,
           },
         },
       ]
