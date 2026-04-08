@@ -14,9 +14,20 @@ const htmlPlugin = () => {
     transformIndexHtml(html) {
       return [
         {
+          tag: 'title',
+          children: 'Шины',
+        },
+        {
+          tag: 'meta',
+          attrs: {
+            name: 'description',
+            content: 'База дисков и шин',
+          },
+        },
+        {
           tag: 'script',
           attrs: {
-            type: 'module',
+            // type: 'module',
             src: 'https://telegram.org/js/telegram-web-app.js',
             defer: false,
           },

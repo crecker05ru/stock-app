@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent } from 'vue'
+import { defineAsyncComponent, onMounted } from 'vue'
 import { RouterLink, RouterView } from 'vue-router'
 // import HelloWorld from './components/HelloWorld.vue'
 import AppHeader from './components/AppHeader.vue'
@@ -11,7 +11,6 @@ import { useTGApp } from './composables/useTGApp'
 const AsyncFooterComponent = defineAsyncComponent(() => import('@/components/AppFooter.vue'))
 
 const WebApp = useTGApp()
-console.log('WebApp ', WebApp)
 const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     try {
@@ -32,6 +31,11 @@ const registerServiceWorker = async () => {
 }
 
 registerServiceWorker()
+
+onMounted(() => {
+  // WebApp.ready()
+  console.log('WebApp ', WebApp)
+})
 </script>
 
 <template>

@@ -3,11 +3,11 @@ import { onBeforeMount, onMounted } from 'vue'
 
 export function useTGApp() {
   onMounted(() => {
-    WebApp.ready()
+    // WebApp.ready()
   })
 
   onBeforeMount(() => {
-    WebApp.close()
+    // WebApp.close()
   })
   return {
     WebApp,
