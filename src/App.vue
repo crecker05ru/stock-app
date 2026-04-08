@@ -6,11 +6,10 @@ import AppHeader from './components/AppHeader.vue'
 import AppMain from './components/AppMain.vue'
 // import AppFooter from '@/components/AppFooter.vue'
 import ModalBody from '@/components/ModalBody.vue'
-import { useTGApp } from './composables/useTGApp'
+// import { useTGApp } from './composables/useTGApp'
 //Асинхронная загрузка компоненты внутри родителя
 const AsyncFooterComponent = defineAsyncComponent(() => import('@/components/AppFooter.vue'))
 
-const WebApp = useTGApp()
 const registerServiceWorker = async () => {
   if ('serviceWorker' in navigator) {
     try {
@@ -32,10 +31,7 @@ const registerServiceWorker = async () => {
 
 registerServiceWorker()
 
-onMounted(() => {
-  // WebApp.ready()
-  console.log('WebApp ', WebApp)
-})
+onMounted(() => {})
 </script>
 
 <template>
