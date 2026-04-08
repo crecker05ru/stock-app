@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server-old": "node --env-file=.env ./server/server.js",
     "server": "node --env-file-if-exists=.env ./server/server.js",
     "dev-server": "vite && yarn server",
     "build": "run-p type-check \"build-only {@}\" --",
